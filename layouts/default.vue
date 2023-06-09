@@ -1,4 +1,5 @@
 <template lang="pug">
-nuxt-layout
-  nuxt-page
+app-header
+nuxt-page
+app-footer
 </template>
