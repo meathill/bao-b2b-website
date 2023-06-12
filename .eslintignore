@@ -2,3 +2,4 @@
 node_modules
 .output
 node-jiti
+.env.development.local

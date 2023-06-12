@@ -9,11 +9,12 @@ function doSearch(): void {
   .container.mx-auto.justify-between
     nuxt-link.text-2xl.font-bold(to="/") Roger
 
-    form.join.min-w-sm(
+    form.join(
+      class="w-1/3"
       @submit.prevent="doSearch"
     )
       label.sr-only(for="global-search") Search
-      input#global-search.input.input-bordered.join-item(
+      input#global-search.input.input-bordered.join-item.flex-1(
         type="search"
         placeholder="Search..."
       )
