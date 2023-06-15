@@ -1,4 +1,7 @@
 <script lang="ts" setup>
+const route = useRoute();
+const isAdmin = route.path.startsWith('/admin');
+
 function doSearch(): void {
 
 }
@@ -22,6 +25,7 @@ function doSearch(): void {
         button.btn.btn-secondary.join-item.text-white Search
 
     nuxt-link.btn.btn-primary(
+      v-if="!isAdmin"
       to="/rfq"
     ) Request Quotation
 
