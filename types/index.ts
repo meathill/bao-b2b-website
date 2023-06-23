@@ -9,8 +9,8 @@ export type Category = {
   name: string;
   slug: string;
   description?: string;
-  created_at?: string;
-  updated_at?: string;
+  createdAt?: string;
+  updatedAt?: string;
   parent: number;
   specifications: Specification[];
 };
@@ -20,8 +20,8 @@ export type Product = {
   name: string;
   slug: string;
   description?: string;
-  created_at?: string;
-  updated_at?: string;
+  createdAt?: string;
+  updatedAt?: string;
   category: number;
   categoryRef?: Category;
   more: Specification[];

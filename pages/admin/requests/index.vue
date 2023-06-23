@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RequestQuotation, RowItem } from '~/types';
+import type { RequestQuotation, RowItem } from '~/types';
 import { formatDate } from '~/utils';
 
 type LocalRowItem = RequestQuotation & RowItem;

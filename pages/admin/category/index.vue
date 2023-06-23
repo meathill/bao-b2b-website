@@ -11,12 +11,12 @@ const { data: categories, pending } = useFetch('/api/categories',
     },
     transform(from: Category[]): LocalRowItem[] {
       return from.map((category: Category) => {
-        const { created_at, updated_at } = category;
+        const { createdAt, updatedAt } = category;
         return {
           ...category,
           isSaving: false,
-          createdAt: formatDate(created_at as string),
-          updatedAt: formatDate(updated_at as string),
+          createdAt: formatDate(createdAt as string),
+          updatedAt: formatDate(updatedAt as string),
         };
       });
     },
