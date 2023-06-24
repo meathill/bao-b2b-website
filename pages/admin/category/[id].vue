@@ -3,7 +3,8 @@ import { createCategory, createSpecification } from '~/utils';
 import type { Category } from '~/types';
 
 const route = useRoute();
-const isNew = route.params.id === 'new';
+const categoryId = Number(route.params.id);
+const isNew = isNaN(categoryId);
 
 const isSaving = ref<boolean>(false);
 const status = ref<boolean>(false);
@@ -17,7 +18,7 @@ const { data: category, pending } = useAsyncData(
     try {
       return await $fetch('/api/category/' + route.params.id);
     } catch (e) {
-      message.value = e.message;
+      message.value = (e as Error).message || String(e);
       return createCategory();
     }
   },
@@ -35,7 +36,25 @@ async function doSave(event: Event): Promise<void> {
   if (isSaving.value) { return }
 
   isSaving.value = true;
-
+  // save category
+  const method = isNew ? 'POST' : 'PUT';
+  const url = '/api/category/' + (isNew ? '' : route.params.id);
+  const { specifications, ...data } = category.value;
+  if (!isNew) {
+    data.id = categoryId;
+  }
+  try {
+    await $fetch(url, {
+      method,
+      body: data,
+    });
+    status.value = true;
+    message.value = 'Category saved.';
+  } catch (e) {
+    status.value = false;
+    message.value = (e as Error).message || String(e);
+  }
+  // update specifications
   isSaving.value = false;
 }
 function doAddSpecification(): void {

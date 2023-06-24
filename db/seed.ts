@@ -1,9 +1,9 @@
-import { db, sql } from './kysely';
+import { db, sql, TABLE_CATEGORY, TABLE_PRODUCT, TABLE_QUOTATION, TABLE_SPEC } from './kysely';
 
 /* eslint disable no-console */
 export async function createCategory(): Promise<void> {
   await db.schema
-    .createTable('category')
+    .createTable(TABLE_CATEGORY)
     .ifNotExists()
     .addColumn('id', 'serial', cb => cb.primaryKey())
     .addColumn('name', 'varchar(255)', cb => cb.notNull())
@@ -30,7 +30,7 @@ export async function createCategory(): Promise<void> {
 
 export async function createProduct(): Promise<void> {
   await db.schema
-    .createTable('product')
+    .createTable(TABLE_PRODUCT)
     .ifNotExists()
     .addColumn('id', 'serial', cb => cb.primaryKey())
     .addColumn('name', 'varchar(255)', cb => cb.notNull())
@@ -62,7 +62,7 @@ export async function createProduct(): Promise<void> {
 
 export async function createSpecification(): Promise<void> {
   await db.schema
-    .createTable('specification')
+    .createTable(TABLE_SPEC)
     .ifNotExists()
     .addColumn('id', 'serial', cb => cb.primaryKey())
     .addColumn('name', 'varchar(255)', cb => cb.notNull())
@@ -87,7 +87,7 @@ export async function createSpecification(): Promise<void> {
 
 export async function createQuotation(): Promise<void> {
   await db.schema
-    .createTable('quotation')
+    .createTable(TABLE_QUOTATION)
     .ifNotExists()
     .addColumn('id', 'serial', cb => cb.primaryKey())
     .addColumn('products', 'json', cb => cb.notNull())

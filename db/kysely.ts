@@ -1,5 +1,10 @@
-import { Generated, ColumnType } from 'kysely';
+import { Generated, ColumnType, Selectable, Insertable, Updateable } from 'kysely';
 import { createKysely } from '@vercel/postgres-kysely';
+
+export const TABLE_CATEGORY = 'category';
+export const TABLE_PRODUCT = 'product';
+export const TABLE_SPEC = 'specification';
+export const TABLE_QUOTATION = 'quotation';
 
 export enum SpecTypes {
   String,
@@ -25,25 +30,31 @@ interface BasicRecord {
   deletedAt: ColumnType<Date, string | undefined, never>
 }
 
-interface CategoryTable extends BasicRecord {
-  name: string;
-  slug: string;
-  parent?: number;
-  description: string;
-  image?: string;
-}
-
-interface Specification {
+export interface SpecificationTable {
   id: Generated<number>;
   name: string;
   type: SpecTypes;
   category: number;
   product: number;
-  options?: string[];
-  defaultValue?: string;
-  description?: string;
-  image?: string;
+  options: string[];
+  defaultValue: string;
+  description: string;
+  image: string;
 }
+export type Specification = Selectable<SpecificationTable>;
+export type NewSpecification = Insertable<Specification>;
+export type EditedSpecification = Updateable<SpecificationTable>;
+
+export interface CategoryTable extends BasicRecord {
+  name: string;
+  slug: string;
+  parent: number;
+  description: string;
+  image: string;
+}
+export type Category = Selectable<CategoryTable>;
+export type NewCategory = Insertable<Category>;
+export type EditedCategory = Updateable<CategoryTable>;
 
 interface ProductTable extends BasicRecord {
   name: string;
@@ -67,17 +78,17 @@ interface QuotationTable {
   contactName: string;
   phone: string;
   email: string;
-  fax?: string;
+  fax: string;
   country: Country;
-  address?: string;
-  comments?: string;
+  address: string;
+  comments: string;
   status: QuotationStatus;
 }
 
 // Keys of this interface are table names.
 export interface Database {
-  category: CategoryTable;
-  spec: Specification;
+  category: Category;
+  specification: Specification;
   product: ProductTable;
   quotation: QuotationTable;
 }
