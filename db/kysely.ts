@@ -5,6 +5,7 @@ export const TABLE_CATEGORY = 'category';
 export const TABLE_PRODUCT = 'product';
 export const TABLE_SPEC = 'specification';
 export const TABLE_QUOTATION = 'quotation';
+export const TABLE_PRODUCT_SPEC = 'product_spec';
 
 export enum SpecTypes {
   String,
@@ -35,7 +36,6 @@ export interface SpecificationTable {
   name: string;
   type: SpecTypes;
   category: number;
-  product: number;
   options: string[];
   defaultValue: string;
   description: string;
@@ -62,6 +62,16 @@ interface ProductTable extends BasicRecord {
   description: string;
   images: string[];
   category: number;
+}
+export type Product = Selectable<ProductTable>;
+export type NewProduct = Insertable<Product>;
+export type EditedProduct = Updateable<ProductTable>;
+
+interface ProductSpecTable {
+  id: Generated<number>;
+  productId: number;
+  specId: number;
+  value: string;
 }
 
 type QuotationItem = {
@@ -90,6 +100,7 @@ export interface Database {
   category: Category;
   specification: Specification;
   product: ProductTable;
+  productSpec: ProductSpecTable;
   quotation: QuotationTable;
 }
 

@@ -1,4 +1,4 @@
-import { db, sql, TABLE_CATEGORY, TABLE_PRODUCT, TABLE_QUOTATION, TABLE_SPEC } from './kysely';
+import {db, sql, TABLE_CATEGORY, TABLE_PRODUCT, TABLE_PRODUCT_SPEC, TABLE_QUOTATION, TABLE_SPEC} from './kysely';
 
 /* eslint disable no-console */
 export async function createCategory(): Promise<void> {
@@ -40,7 +40,7 @@ export async function createProduct(): Promise<void> {
     .addColumn(
       'category',
       'integer',
-      cb => cb.references('category.id').onDelete('no action'),
+      cb => cb.references(TABLE_CATEGORY + '.id').onDelete('no action'),
     )
     .addColumn(
       'createdAt',
@@ -70,12 +70,7 @@ export async function createSpecification(): Promise<void> {
     .addColumn(
       'category',
       'int8',
-      cb => cb.references('category.id').onDelete('no action'),
-    )
-    .addColumn(
-      'product',
-      'int8',
-      cb => cb.references('product.id').onDelete('no action'),
+      cb => cb.references(TABLE_CATEGORY + '.id').onDelete('no action'),
     )
     .addColumn('options', 'varchar[]')
     .addColumn('defaultValue', 'varchar')
@@ -83,6 +78,25 @@ export async function createSpecification(): Promise<void> {
     .addColumn('image', 'varchar')
     .execute();
   console.log('Created `specification` table');
+}
+
+export async function createProductSpec():  Promise<void> {
+  await db.schema
+    .createTable(TABLE_PRODUCT_SPEC)
+    .ifNotExists()
+    .addColumn('id', 'serial', cb => cb.primaryKey())
+    .addColumn(
+      'productId',
+      'int8',
+      cb => cb.references(TABLE_PRODUCT + '.id').onDelete('no action')
+    )
+    .addColumn(
+      'specId',
+      'int8',
+      cb => cb.references(TABLE_SPEC + '.id').onDelete('no action')
+    )
+    .addColumn('value', 'varchar(255)')
+    .execute();
 }
 
 export async function createQuotation(): Promise<void> {

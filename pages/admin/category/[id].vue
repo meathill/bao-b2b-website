@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { createCategory, createSpecification } from '~/utils';
-import type { Category } from '~/types';
+import type { Category } from '~/db/kysely';
 
 const route = useRoute();
 const categoryId = Number(route.params.id);
@@ -122,32 +122,19 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
   .flex-1
     label.label
       span.label-text Specifications
-    .grid.grid-cols-2.gap-2
-      label.label
-        span.label-text Name
-      label.label
-        span.label-text Type
-      template(
-        v-for="item in category.specifications"
-        :key="item.name"
+    specification-editor.mb-4(
+      v-for="(item, index) in category.specifications"
+      :key="item.name"
+      v-model="category.specifications[index]"
+    )
+
+    .col-span-2
+      button.btn(
+        type="button"
+        @click="doAddSpecification"
       )
-        .form-control
-          input.input.input-bordered(
-            required
-            v-model="item.name"
-          )
-        .form-control
-          input.input.input-bordered(
-            required
-            v-model="item.value"
-          )
-      .col-span-2
-        button.btn(
-          type="button"
-          @click="doAddSpecification"
-        )
-          i.bi.bi-plus-lg
-          | Add Specification
+        i.bi.bi-plus-lg
+        | Add Specification
 </template>
 
 <script lang="ts">
