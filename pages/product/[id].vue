@@ -2,8 +2,6 @@
 
 </script>
 
-<template />
-
-<style scoped>
-
-</style>
+<template lang="pug">
+h1 Product
+</template>

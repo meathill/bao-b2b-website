@@ -1,6 +1,7 @@
 import pickBy from 'lodash/pickBy';
-import isNil from 'lodash/isNil'
-import {NewCategory, NewProduct, Specification, SpecTypes} from '~/db/kysely';
+import isNil from 'lodash/isNil';
+import { NewCategory, NewProduct, NewSpecification } from '~/db/types';
+import { SpecificationTypes } from '~/data';
 
 export function enumToOptions(from: Record<string, string | number>): Record<string, string | number> {
   return pickBy(from, (value, key) => {
@@ -19,11 +20,14 @@ export function createCategory(): NewCategory {
   };
 }
 
-export function createSpecification(): Specification {
+export function createSpecification(category: number): NewSpecification {
   return {
+    id: 0,
     name: '',
+    type: SpecificationTypes.Input,
     description: '',
-    type: SpecTypes.String,
+    options: [],
+    category,
   };
 }
 

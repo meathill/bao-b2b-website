@@ -1,22 +1,23 @@
 <script setup lang="ts">
-import type { RequestQuotation, RowItem } from '~/types';
+import type { Quotation } from '~/db/types';
+import type { RowItem } from '~/types';
 import { formatDate } from '~/utils';
 
-type LocalRowItem = RequestQuotation & RowItem;
+type LocalRowItem = Quotation & RowItem;
 
 const { data: quotations, pending } = useFetch('/api/requests',
   {
     default() {
       return [];
     },
-    transform(from: RequestQuotation[]): LocalRowItem[] {
-      return from.map((quotation: RequestQuotation) => {
-        const { created_at, updated_at } = quotation;
+    transform(from: Quotation[]): LocalRowItem[] {
+      return from.map((quotation: Quotation) => {
+        const { createdAt, updatedAt } = quotation;
         return {
           ...quotation,
           isSaving: false,
-          createdAt: formatDate(created_at as string),
-          updatedAt: formatDate(updated_at as string),
+          createdAt: formatDate(createdAt),
+          updatedAt: formatDate(updatedAt),
         };
       });
     },

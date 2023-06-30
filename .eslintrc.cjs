@@ -5,6 +5,7 @@ module.exports = {
   rules: {
     semi: 'off',
     'comma-dangle': 'off',
+    'no-console': 0,
     'space-before-function-paren': ['error', {
       "anonymous": "always",
       "named": "never",

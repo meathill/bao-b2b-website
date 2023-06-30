@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { $fetch } from 'ofetch';
 import { createCategory, createProduct, createSpecification } from '~/utils';
 import type { Category, Product } from '~/types';
 
@@ -35,7 +36,10 @@ async function doSave(event: Event): Promise<void> {
   if (isSaving.value) { return }
 
   isSaving.value = true;
-
+  await $fetch('/api/product', {
+    method: 'POST',
+    body: product.value,
+  });
   isSaving.value = false;
 }
 function doAddSpecification(): void {

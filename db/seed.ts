@@ -1,6 +1,15 @@
-import {db, sql, TABLE_CATEGORY, TABLE_PRODUCT, TABLE_PRODUCT_SPEC, TABLE_QUOTATION, TABLE_SPEC} from './kysely';
+import {
+  TABLE_CATEGORY,
+  TABLE_PRODUCT,
+  TABLE_PRODUCT_SPEC,
+  TABLE_QUOTATION,
+  TABLE_SPEC,
+} from './types';
+import {
+  db,
+  sql,
+} from './kysely';
 
-/* eslint disable no-console */
 export async function createCategory(): Promise<void> {
   await db.schema
     .createTable(TABLE_CATEGORY)
@@ -80,7 +89,7 @@ export async function createSpecification(): Promise<void> {
   console.log('Created `specification` table');
 }
 
-export async function createProductSpec():  Promise<void> {
+export async function createProductSpec(): Promise<void> {
   await db.schema
     .createTable(TABLE_PRODUCT_SPEC)
     .ifNotExists()
@@ -88,12 +97,12 @@ export async function createProductSpec():  Promise<void> {
     .addColumn(
       'productId',
       'int8',
-      cb => cb.references(TABLE_PRODUCT + '.id').onDelete('no action')
+      cb => cb.references(TABLE_PRODUCT + '.id').onDelete('no action'),
     )
     .addColumn(
       'specId',
       'int8',
-      cb => cb.references(TABLE_SPEC + '.id').onDelete('no action')
+      cb => cb.references(TABLE_SPEC + '.id').onDelete('no action'),
     )
     .addColumn('value', 'varchar(255)')
     .execute();

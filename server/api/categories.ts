@@ -1,15 +1,17 @@
 import { H3Event } from 'h3';
-import { db, TABLE_CATEGORY } from '~/db/kysely';
-import { ApiResponse, Category } from '~/types';
+import { db } from '~/db/kysely';
+import { Category, TABLE_CATEGORY } from '~/db/types';
+import { ApiResponse } from '~/types';
 
 const { count } = db.fn;
 
 export default defineEventHandler(async function (event: H3Event): Promise<ApiResponse<Category[]>> {
+  const params = getQuery(event);
   let {
     page,
     size,
-    search = '',
-  } = getQuery(event);
+  } = params;
+  const { search = '' } = params;
   page = page ? parseInt(page as string, 10) : 1;
   size = size ? parseInt(size as string, 10) : 20;
 

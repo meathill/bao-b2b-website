@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { createCategory, createSpecification } from '~/utils';
-import type { Category } from '~/db/kysely';
+import type { Category } from '~/db/types';
 
 const route = useRoute();
 const categoryId = Number(route.params.id);
@@ -58,7 +58,8 @@ async function doSave(event: Event): Promise<void> {
   isSaving.value = false;
 }
 function doAddSpecification(): void {
-  category.value.specifications.push(createSpecification());
+  category.value.specifications
+    .push(createSpecification(isNew ? 0 : categoryId));
 }
 </script>
 
@@ -120,8 +121,6 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         v-model="category.description"
       )
   .flex-1
-    label.label
-      span.label-text Specifications
     specification-editor.mb-4(
       v-for="(item, index) in category.specifications"
       :key="item.name"

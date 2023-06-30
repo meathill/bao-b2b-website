@@ -1,5 +1,7 @@
 export type RowItem = {
   isSaving: boolean;
+  createdAt: string;
+  updatedAt: string;
 };
 
 export type ApiResponse<T> = {

@@ -1,6 +1,7 @@
 import { H3Event } from 'h3';
 import { ApiResponse } from '~/types';
-import { Category, db, Specification, TABLE_CATEGORY, TABLE_SPEC } from '~/db/kysely';
+import { db } from '~/db/kysely';
+import { Category, Specification, TABLE_CATEGORY, TABLE_SPEC } from '~/db/types';
 
 export default defineEventHandler(async function (event: H3Event): Promise<ApiResponse<Category>> {
   const id = event.context.params?.id
