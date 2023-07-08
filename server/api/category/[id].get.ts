@@ -4,25 +4,24 @@ import { db } from '~/db/kysely';
 import { Category, Specification, TABLE_CATEGORY, TABLE_SPEC } from '~/db/types';
 
 export default defineEventHandler(async function (event: H3Event): Promise<ApiResponse<Category>> {
-  const id = event.context.params?.id
-    ? Number(event.context.params.id) as Category['id']
-    : 0;
-  if (!id || isNaN(id)) {
+  const id = event.context.params?.id;
+  if (!id || isNaN(Number(id))) {
     throw createError({
       statusCode: 400,
       statusMessage: 'Invalid category id',
     });
   }
+  const categoryId = Number(id);
 
   const category = await db
     .selectFrom(TABLE_CATEGORY)
     .selectAll()
-    .where('id', '=', id)
+    .where('id', '=', categoryId)
     .where('deletedAt', 'is', null)
     .executeTakeFirst();
   const specifications: Specification[] = await db
     .selectFrom(TABLE_SPEC)
-    .where('category', '=', id)
+    .where('category', '=', categoryId)
     .selectAll()
     .execute();
   if (!category) {

@@ -21,7 +21,12 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
 
   await db
     .insertInto(TABLE_SPEC)
-    .values(specifications)
+    .values(specifications.map((spec) => {
+      return {
+        ...spec,
+        category: category.id,
+      };
+    }))
     .execute();
 
   return {

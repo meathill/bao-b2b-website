@@ -1,7 +1,9 @@
 import pickBy from 'lodash/pickBy';
 import isNil from 'lodash/isNil';
-import { NewCategory, NewProduct, NewSpecification } from '~/db/types';
+import { EditedSpecification, NewCategory, NewProduct } from '~/db/types';
 import { SpecificationTypes } from '~/data';
+
+const newId = -1;
 
 export function enumToOptions(from: Record<string, string | number>): Record<string, string | number> {
   return pickBy(from, (value, key) => {
@@ -11,7 +13,7 @@ export function enumToOptions(from: Record<string, string | number>): Record<str
 
 export function createCategory(): NewCategory {
   return {
-    id: 0,
+    id: -1,
     name: '',
     description: '',
     slug: '',
@@ -20,9 +22,9 @@ export function createCategory(): NewCategory {
   };
 }
 
-export function createSpecification(category: number): NewSpecification {
+export function createSpecification(category: number): EditedSpecification {
   return {
-    id: 0,
+    id: -1,
     name: '',
     type: SpecificationTypes.Input,
     description: '',
@@ -33,7 +35,7 @@ export function createSpecification(category: number): NewSpecification {
 
 export function createProduct(): NewProduct {
   return {
-    id: 0,
+    id: -1,
     name: '',
     slug: '',
     description: '',

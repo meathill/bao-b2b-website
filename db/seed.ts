@@ -18,6 +18,7 @@ export async function createCategory(): Promise<void> {
     .addColumn('name', 'varchar(255)', cb => cb.notNull())
     .addColumn('slug', 'varchar(255)', cb => cb.notNull().unique())
     .addColumn('parent', 'int8')
+    .addColumn('description', 'varchar(255)')
     .addColumn('image', 'varchar(255)')
     .addColumn(
       'createdAt',

@@ -37,7 +37,10 @@ export interface SpecificationTable {
 }
 export type Specification = Selectable<SpecificationTable>;
 export type NewSpecification = Insertable<Specification>;
-export type EditedSpecification = Updateable<SpecificationTable>;
+export type EditedSpecification = Updateable<SpecificationTable> & {
+  isChanged?: boolean;
+  isDeleted?: boolean;
+};
 
 export interface CategoryTable extends BasicRecord {
   name: string;
@@ -46,7 +49,9 @@ export interface CategoryTable extends BasicRecord {
   description: string;
   image: string;
 }
-export type Category = Selectable<CategoryTable>;
+export type Category = Selectable<CategoryTable> & {
+  specifications: Specification[];
+};
 export type NewCategory = Insertable<Category>;
 export type EditedCategory = Updateable<CategoryTable>;
 

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { createCategory, createSpecification } from '~/utils';
-import type { Category } from '~/db/types';
+import type { Category, EditedSpecification, Specification } from '~/db/types';
+import type { ApiResponse } from '~/types';
 
 const route = useRoute();
 const categoryId = Number(route.params.id);
@@ -15,12 +16,24 @@ const { data: category, pending } = useAsyncData(
   async function () {
     if (isNew) { return createCategory() }
 
+    let result: ApiResponse<Category>;
     try {
-      return await $fetch('/api/category/' + route.params.id);
+      result = await $fetch<ApiResponse<Category>>('/api/category/' + route.params.id);
+      if (!result.data) { throw new Error('Category not found.') }
     } catch (e) {
       message.value = (e as Error).message || String(e);
       return createCategory();
     }
+
+    const { specifications } = result.data;
+    return {
+      ...result.data,
+      specifications: specifications.map((spec: Specification) => ({
+        ...spec,
+        isEdited: false,
+        isDeleted: false,
+      })),
+    };
   },
   {
     default() {
@@ -30,31 +43,38 @@ const { data: category, pending } = useAsyncData(
     },
   },
 );
+const specifications = computed<Specification[]>(() => {
+  return category.value.specifications
+    .filter((spec: EditedSpecification) => !spec.isDeleted);
+});
 
 async function doSave(event: Event): Promise<void> {
   if ((event.target as HTMLFormElement).matches(':invalid')) { return }
   if (isSaving.value) { return }
 
   isSaving.value = true;
+  message.value = '';
   // save category
   const method = isNew ? 'POST' : 'PUT';
   const url = '/api/category/' + (isNew ? '' : route.params.id);
-  const { specifications, ...data } = category.value;
-  if (!isNew) {
-    data.id = categoryId;
-  }
   try {
-    await $fetch(url, {
+    const result = await $fetch<ApiResponse<number>>(url, {
       method,
-      body: data,
+      body: {
+        ...category.value,
+        ...!isNew && { id: categoryId },
+      },
     });
     status.value = true;
     message.value = 'Category saved.';
+    if (isNew) {
+      const router = useRouter();
+      await router.push('/admin/category/' + result.data);
+    }
   } catch (e) {
     status.value = false;
     message.value = (e as Error).message || String(e);
   }
-  // update specifications
   isSaving.value = false;
 }
 function doAddSpecification(): void {
@@ -75,7 +95,7 @@ header.flex.items-center.pb-4.mb-4.border-b
     i.bi.bi-check-lg(v-else)
     | Save
 
-.alert(
+.alert.mb-4(
   v-if="message"
   :class="{ 'alert-success': status, 'alert-error': !status }"
 )
@@ -122,9 +142,9 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
       )
   .flex-1
     specification-editor.mb-4(
-      v-for="(item, index) in category.specifications"
-      :key="item.name"
-      v-model="category.specifications[index]"
+      v-for="(item, index) in specifications"
+      :key="index"
+      v-model="specifications[index]"
     )
 
     .col-span-2
