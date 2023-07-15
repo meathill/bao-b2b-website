@@ -2,9 +2,11 @@
 import type { RowItem, ApiResponse } from '~/types';
 import type { Category } from '~/db/types';
 import { formatDate } from '~/utils';
+import useProductStore from '~/store/product';
 
 type LocalRowItem = Category & RowItem;
 
+const productStore = useProductStore();
 const message = ref<string>('');
 const total = ref<number>(0);
 
@@ -13,6 +15,7 @@ const { data: categories, pending } = useAsyncData('categories',
     try {
       const { data, meta } = await $fetch<ApiResponse<Category[]>>('/api/categories');
       total.value = meta?.total || 0;
+      productStore.setCategories(data as Category[]);
       return data;
     } catch (e) {
       message.value = (e as Error).message || String(e);

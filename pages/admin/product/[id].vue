@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { $fetch } from 'ofetch';
-import { createCategory, createProduct, createSpecification } from '~/utils';
-import type { Category, Product } from '~/types';
+import { createProduct, createProductSpecification } from '~/utils';
+import type { Category, Product } from '~/db/types';
+import type { ApiResponse } from '~/types';
 
 const route = useRoute();
 const isNew = route.params.id === 'new';
@@ -10,6 +10,7 @@ const isSaving = ref<boolean>(false);
 const status = ref<boolean>(false);
 const message = ref<string>('');
 const { data: products } = useNuxtData('/api/products');
+const { data: nuxtCategories } = useNuxtData('categories');
 const { data: product, pending } = useAsyncData(
   '/api/product/' + route.params.id,
   async function () {
@@ -30,6 +31,29 @@ const { data: product, pending } = useAsyncData(
     },
   },
 );
+const { data: categories } = useAsyncData<Category[]>(
+  'categories',
+  async function () {
+    if (nuxtCategories.value) { return nuxtCategories.value }
+
+    const { data } = await $fetch<ApiResponse<Category[]>>('/api/categories');
+
+    return data || [];
+  },
+  {
+    default() {
+      return nuxtCategories.value || [];
+    },
+    async onResponse() {
+      await refreshNuxtData('categories');
+    },
+  },
+);
+const requiredSpecifications = computed<Specification[]>(() => {
+  return categories.value
+    .find((cat: Category) => cat.id === product.value.categoryId)
+    ?.specifications || [];
+});
 
 async function doSave(event: Event): Promise<void> {
   if ((event.target as HTMLFormElement).matches(':invalid')) { return }
@@ -43,13 +67,13 @@ async function doSave(event: Event): Promise<void> {
   isSaving.value = false;
 }
 function doAddSpecification(): void {
-  product.value.more.push(createSpecification());
+  product.value.more.push(createProductSpecification());
 }
 </script>
 
 <template lang="pug">
 header.flex.items-center.pb-4.mb-4.border-b
-  h1.text-2xl.font-bold {{isNew ? 'Create' : 'New'}} Product
+  h1.text-2xl.font-bold {{isNew ? 'Create' : 'Edit'}} Product
   span.loading.loading-spinner.ml-2(v-if="pending")
   button.btn.btn-primary.ml-auto(
     form="editor"
@@ -103,6 +127,11 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         name="productCategory"
         v-model="product.category"
       )
+        option(
+          v-for="item in categories"
+          :key="item.id"
+          :value="item.id"
+        ) {{item.name}}
   .flex-1
     label.label
       span.label-text Specifications

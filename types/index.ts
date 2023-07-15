@@ -12,3 +12,8 @@ export type ApiResponse<T> = {
     total: number;
   },
 };
+
+export type ProductSpecification = {
+  label: string;
+  value: string;
+};

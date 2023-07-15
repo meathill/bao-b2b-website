@@ -2,6 +2,7 @@ import pickBy from 'lodash/pickBy';
 import isNil from 'lodash/isNil';
 import { EditedSpecification, NewCategory, NewProduct } from '~/db/types';
 import { SpecificationTypes } from '~/data';
+import { ProductSpecification } from '~/types';
 
 const newId = -1;
 
@@ -22,7 +23,7 @@ export function createCategory(): NewCategory {
   };
 }
 
-export function createSpecification(category: number): EditedSpecification {
+export function createSpecification(category = -1): EditedSpecification {
   return {
     id: -1,
     name: '',
@@ -41,6 +42,13 @@ export function createProduct(): NewProduct {
     description: '',
     category: 0,
     more: [],
+  };
+}
+
+export function createProductSpecification(): ProductSpecification {
+  return {
+    label: '',
+    value: '',
   };
 }
 

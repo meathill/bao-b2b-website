@@ -7,13 +7,7 @@ const { count } = db.fn;
 
 export default defineEventHandler(async function (event: H3Event): Promise<ApiResponse<Category[]>> {
   const params = getQuery(event);
-  let {
-    page,
-    size,
-  } = params;
   const { search = '' } = params;
-  page = page ? parseInt(page as string, 10) : 1;
-  size = size ? parseInt(size as string, 10) : 20;
 
   let query = db.selectFrom(TABLE_CATEGORY)
     .where('deletedAt', 'is', null);
@@ -23,11 +17,9 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
   const total = await query
     .select(count('id').as('total'))
     .execute();
-  query = query
+  const results = await query
     .select(['id', 'name', 'slug', 'parent', 'description', 'createdAt', 'updatedAt'])
-    .limit(size)
-    .offset((page - 1) * size);
-  const results = await query.execute();
+    .execute();
 
   return {
     code: 0,

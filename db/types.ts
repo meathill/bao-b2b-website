@@ -63,6 +63,7 @@ interface ProductTable extends BasicRecord {
   description: string;
   images: string[];
   category: number;
+  specifications: Record<string, string>;
 }
 export type Product = Selectable<ProductTable>;
 export type NewProduct = Insertable<Product>;
