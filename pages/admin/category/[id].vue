@@ -30,7 +30,7 @@ const { data: category, pending } = useAsyncData(
       ...result.data,
       specifications: specifications.map((spec: Specification) => ({
         ...spec,
-        isEdited: false,
+        isChanged: false,
         isDeleted: false,
       })),
     };
@@ -85,7 +85,7 @@ function doAddSpecification(): void {
 
 <template lang="pug">
 header.flex.items-center.pb-4.mb-4.border-b
-  h1.text-2xl.font-bold {{isNew ? 'Create' : 'New'}} Category
+  h1.text-2xl.font-bold {{isNew ? 'Create' : 'Edit'}} Category
   span.loading.loading-spinner.ml-2(v-if="pending")
   button.btn.btn-primary.ml-auto(
     form="editor"
@@ -100,7 +100,7 @@ header.flex.items-center.pb-4.mb-4.border-b
   :class="{ 'alert-success': status, 'alert-error': !status }"
 )
   p
-    i.bi.bi-exclamation-triangle-fill.mr-2
+    i.bi.bi-exclamation-triangle-fill.mr-2(v-if="!status")
     | {{message}}
 
 form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")

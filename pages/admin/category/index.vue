@@ -1,10 +1,23 @@
 <script setup lang="ts">
-import type { Category, RowItem } from '~/types';
+import type { RowItem, ApiResponse } from '~/types';
+import type { Category } from '~/db/types';
 import { formatDate } from '~/utils';
 
 type LocalRowItem = Category & RowItem;
 
-const { data: categories, pending } = useFetch('/api/categories',
+const message = ref<string>('');
+const total = ref<number>(0);
+
+const { data: categories, pending } = useAsyncData('categories',
+  async function () {
+    try {
+      const { data, meta } = await $fetch<ApiResponse<Category[]>>('/api/categories');
+      total.value = meta?.total || 0;
+      return data;
+    } catch (e) {
+      message.value = (e as Error).message || String(e);
+    }
+  },
   {
     default() {
       return [];
@@ -42,18 +55,21 @@ table.table.table-zebra.border
       th
   tbody
     tr(v-if="pending")
-      td.text-center(colspan="4")
+      td.text-center(colspan="5")
         span.loading.loading-spinner.mr-2
         | Loading...
     tr(v-for="item in categories")
-      td {{ item.name }}
+      td
+        nuxt-link.link(
+          :to="'/admin/category/' + item.id"
+        ) {{ item.name }}
       td {{ item.parent }}
       td {{ item.slug }}
       td {{ item.description }}
       td.text-xs
-        time(:datetime="item.created_at") {{ item.createdAt }}
-        | /
-        time(:datetime="item.updated_at") {{ item.updatedAt }}
+        time(:datetime="item.createdAt") {{ item.createdAt }}
+        span.mx-2 /
+        time(:datetime="item.updatedAt") {{ item.updatedAt }}
       td
         .join
           nuxt-link.btn.btn-xs.btn-success.join-item(

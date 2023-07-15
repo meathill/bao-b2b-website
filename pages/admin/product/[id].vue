@@ -18,7 +18,7 @@ const { data: product, pending } = useAsyncData(
     try {
       return await $fetch('/api/product/' + route.params.id);
     } catch (e) {
-      message.value = e.message;
+      message.value = (e as Error).message || String(e);
       return createProduct();
     }
   },
@@ -95,6 +95,13 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         placeholder="Category description"
         rows="3"
         v-model="product.description"
+      )
+    .form-control
+      label.label
+        span.label-text Category
+      select.select.select-bordered(
+        name="productCategory"
+        v-model="product.category"
       )
   .flex-1
     label.label

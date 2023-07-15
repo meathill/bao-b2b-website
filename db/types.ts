@@ -53,7 +53,9 @@ export type Category = Selectable<CategoryTable> & {
   specifications: Specification[];
 };
 export type NewCategory = Insertable<Category>;
-export type EditedCategory = Updateable<CategoryTable>;
+export type EditedCategory = Updateable<Category> & {
+  specifications: EditedSpecification[];
+};
 
 interface ProductTable extends BasicRecord {
   name: string;
