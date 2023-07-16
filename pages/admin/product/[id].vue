@@ -67,8 +67,10 @@ async function doSave(event: Event): Promise<void> {
   if (isSaving.value || isLoadingSpec.value) { return }
 
   isSaving.value = true;
-  const { data } = await $fetch<ApiResponse<number>>('/api/product', {
-    method: 'POST',
+  const url = isNew ? '/api/product' : '/api/product/' + route.params.id;
+  const method = isNew ? 'POST' : 'PUT';
+  const { data } = await $fetch<ApiResponse<number>>(url, {
+    method,
     body: {
       ...product.value,
       specifications: requiredSpecs.value.map((spec: Specification) => {

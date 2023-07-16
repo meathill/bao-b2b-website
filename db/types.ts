@@ -77,9 +77,7 @@ interface ProductTable extends BasicRecord {
   more: ProductSpecification[];
   specifications: ProductSpec[];
 }
-export type Product = Selectable<ProductTable> & {
-  specifications: ProductSpecification[];
-};
+export type Product = Selectable<ProductTable>;
 export type NewProduct = Insertable<Product>;
 export type EditedProduct = Updateable<Product>;
 

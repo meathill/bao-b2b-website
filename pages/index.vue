@@ -3,7 +3,7 @@
 </script>
 
 <template lang="pug">
-.flex.container.mx-auto.pt-4.gap-4
+main.flex.container.mx-auto.pt-4.gap-4
   aside.border.w-80.flex.flex-col
     header.bg-base-300.px-4.py-2
       h2.text-xl.font-semibold Product Category

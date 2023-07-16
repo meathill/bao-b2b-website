@@ -1,10 +1,24 @@
 <script setup lang="ts">
-import type { Product, RowItem } from '~/types';
+import type { ApiResponse, RowItem } from '~/types';
+import type { Product } from '~/db/types';
 import { formatDate } from '~/utils';
 
 type LocalRowItem = Product & RowItem;
 
-const { data: categories, pending } = useFetch('/api/products',
+const page = ref<number>(0);
+const size = ref<number>(20);
+const message = ref<string>('');
+const { data: products, pending } = useAsyncData(
+  'products',
+  async function () {
+    const { data } = await $fetch<ApiResponse<Product[]>>('/api/products', {
+      query: {
+        page: page.value,
+        size: size.value,
+      },
+    });
+    return data;
+  },
   {
     default() {
       return [];
@@ -22,6 +36,21 @@ const { data: categories, pending } = useFetch('/api/products',
     },
   },
 );
+
+async function doRemove(item: RowItem, index: number): Promise<void> {
+  if (!confirm('Are you sure to remove this category?')) { return }
+
+  item.isSaving = true;
+  try {
+    await $fetch(`/api/product/${item.id}`, {
+      method: 'DELETE',
+    });
+    products.value && products.value.splice(index, 1);
+  } catch (e) {
+    message.value = (e as Error).message || String(e);
+  }
+  item.isSaving = false;
+}
 </script>
 
 <template lang="pug">
@@ -42,27 +71,28 @@ table.table.table-zebra.border
       th
   tbody
     tr(v-if="pending")
-      td.text-center(colspan="4")
+      td.text-center(colspan="5")
         span.loading.loading-spinner.mr-2
         | Loading...
-    tr(v-for="item in categories")
+    tr(v-for="(item, index) in products")
       td {{ item.name }}
       td {{ item.category }}
       td {{ item.slug }}
       td {{ item.description }}
       td.text-xs
-        time(:datetime="item.created_at") {{ item.createdAt }}
-        | /
-        time(:datetime="item.updated_at") {{ item.updatedAt }}
+        time(:datetime="item.createdAt") {{ item.createdAt }}
+        span.mx-1 /
+        time(:datetime="item.createdAt") {{ item.updatedAt }}
       td
         .join
-          nuxt-link.btn.btn-xs.btn-success.join-item(
+          nuxt-link.btn.btn-sm.btn-success.join-item(
             :to="'/admin/product/' + item.id"
           )
             i.bi.bi-pen
-          button.btn.btn-xs.btn-error.join-item(
+          button.btn.btn-sm.btn-error.join-item(
             type="button"
             :disabled="item.isSaving"
+            @click="doRemove(item, index)"
           )
             span.loading.loading-spinner(v-if="item.isSaving")
             i.bi.bi-trash3(v-else)

@@ -38,6 +38,20 @@ const { data: categories, pending } = useAsyncData('categories',
     },
   },
 );
+async function doRemove(item: RowItem, index: number): Promise<void> {
+  if (!confirm('Are you sure to remove this category?')) { return }
+
+  item.isSaving = true;
+  try {
+    await $fetch(`/api/category/${item.id}`, {
+      method: 'DELETE',
+    });
+    categories.value && categories.value.splice(index, 1);
+  } catch (e) {
+    message.value = (e as Error).message || String(e);
+  }
+  item.isSaving = false;
+}
 </script>
 
 <template lang="pug">
@@ -61,7 +75,7 @@ table.table.table-zebra.border
       td.text-center(colspan="5")
         span.loading.loading-spinner.mr-2
         | Loading...
-    tr(v-for="item in categories")
+    tr(v-for="(item, index) in categories")
       td
         nuxt-link.link(
           :to="'/admin/category/' + item.id"
@@ -75,13 +89,14 @@ table.table.table-zebra.border
         time(:datetime="item.updatedAt") {{ item.updatedAt }}
       td
         .join
-          nuxt-link.btn.btn-xs.btn-success.join-item(
+          nuxt-link.btn.btn-sm.btn-success.join-item(
             :to="'/admin/category/' + item.id"
           )
             i.bi.bi-pen
-          button.btn.btn-xs.btn-error.join-item(
+          button.btn.btn-sm.btn-error.join-item(
             type="button"
             :disabled="item.isSaving"
+            @click="doRemove(item, index)"
           )
             span.loading.loading-spinner(v-if="item.isSaving")
             i.bi.bi-trash3(v-else)

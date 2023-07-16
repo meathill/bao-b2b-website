@@ -1,4 +1,5 @@
 export type RowItem = {
+  id: number;
   isSaving: boolean;
   createdAt: string;
   updatedAt: string;

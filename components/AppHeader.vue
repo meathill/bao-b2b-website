@@ -2,8 +2,16 @@
 const route = useRoute();
 const isAdmin = route.path.startsWith('/admin');
 
-function doSearch(): void {
+const search = ref<string>('');
 
+function doSearch(): void {
+  const router = useRouter();
+  router.push({
+    name: 'search',
+    query: {
+      search: search.value,
+    },
+  });
 }
 </script>
 
@@ -20,6 +28,7 @@ function doSearch(): void {
       input#global-search.input.input-bordered.join-item.flex-1(
         type="search"
         placeholder="Search..."
+        v-model="search"
       )
       .indicator
         button.btn.btn-secondary.join-item.text-white Search

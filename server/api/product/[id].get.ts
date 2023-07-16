@@ -22,7 +22,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<Produ
   if (!product) {
     throw createError({
       statusCode: 404,
-      statusMessage: 'Category not found',
+      statusMessage: 'Product not found',
     });
   }
 
