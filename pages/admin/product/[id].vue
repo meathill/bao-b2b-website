@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import slugify from 'slugify';
 import { createProduct, createProductSpecification } from '~/utils';
 import type { Category, Product, ProductSpec, Specification } from '~/db/types';
 import type { ApiResponse } from '~/types';
+import { useProductStore } from '~/store';
 
+const productStore = useProductStore();
 const route = useRoute();
 const isNew = route.params.id === 'new';
 const productName = ref<HTMLInputElement>();
@@ -34,15 +37,16 @@ const { data: product, pending } = useAsyncData(
     },
   },
 );
-const { data: categories } = useAsyncData<Category[]>(
+const { data: categories } = useAsyncData<Record<string, Category>>(
   'categories',
   async function () {
-    const { data } = await $fetch<ApiResponse<Category[]>>('/api/categories');
-    return data || [];
+    if (productStore.isLoaded) { return productStore.categories }
+    await productStore.refreshCategories();
+    return productStore.categories;
   },
   {
     default() {
-      return [];
+      return productStore.isLoaded ? productStore.categories : {};
     },
   },
 );
@@ -93,6 +97,12 @@ async function doAddSpecification(): Promise<void> {
   const input = specName.value && specName.value[0] as HTMLInputElement;
   input?.focus();
 }
+function onNameChange(event: Event): void {
+  const newName = (event.target as HTMLInputElement).value;
+  product.value.slug = slugify(newName, {
+    lower: true,
+  });
+}
 async function onCategoryChange(event: Event | number): Promise<void> {
   if (isLoadingSpec.value) { return }
 
@@ -142,7 +152,7 @@ header.flex.items-center.pb-4.mb-4.border-b
 
 form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
   .flex-none(class="w-1/2")
-    .form-control
+    .form-control.mb-4
       label.label
         span.label-text Name
       input.input.input-bordered(
@@ -151,8 +161,9 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         name="productName"
         placeholder="Category name"
         v-model="product.name"
+        @change="onNameChange"
       )
-    .form-control
+    .form-control.mb-4
       label.label
         span.label-text Slug
       input.input.input-bordered(
@@ -161,7 +172,7 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         placeholder="Category slug"
         v-model="product.slug"
       )
-    .form-control
+    .form-control.mb-4
       label.label
         span.label-text Description
       textarea.input.input-bordered.h-24(
@@ -170,7 +181,9 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         rows="3"
         v-model="product.description"
       )
-    .form-control
+      label.label
+        span.label-text-alt Markdown supported
+    .form-control.mb-4
       label.label
         span.label-text Category
       select.select.select-bordered(
@@ -183,10 +196,10 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
           :value="-1"
         ) === Select category ===
         option(
-          v-for="item in categories"
-          :key="item.id"
-          :value="item.id"
-        ) {{item.name}}
+          v-for="(cate, cateId) in categories"
+          :key="cateId"
+          :value="cateId"
+        ) {{cate.name}}
   .flex-1
     label.label
       span.label-text Category Specifications
@@ -205,6 +218,8 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
             v-model="item.value"
           )
     p.text-gray-400.text-sm.mb-4.indent-4(v-else) No specifications for this category
+
+    hr.my-4
 
     label.label
       span.label-text Product Specifications

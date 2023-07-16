@@ -31,6 +31,7 @@
     "@vercel/postgres-kysely": "^0.4.0",
     "kysely": "^0.25.0",
     "lodash": "^4.17.21",
-    "pinia": "^2.1.4"
+    "pinia": "^2.1.4",
+    "slugify": "^1.6.6"
   }
 }

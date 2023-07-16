@@ -26,6 +26,9 @@ dependencies:
   pinia:
     specifier: ^2.1.4
     version: 2.1.4(typescript@5.1.6)(vue@3.3.4)
+  slugify:
+    specifier: ^1.6.6
+    version: 1.6.6
 
 devDependencies:
   '@nuxt/devtools':

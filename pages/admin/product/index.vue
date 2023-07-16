@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type { ApiResponse, RowItem } from '~/types';
-import type { Product } from '~/db/types';
+import type { Category, Product } from '~/db/types';
 import { formatDate } from '~/utils';
+import { useProductStore } from '~/store';
 
 type LocalRowItem = Product & RowItem;
 
+const productStore = useProductStore();
 const page = ref<number>(0);
 const size = ref<number>(20);
 const message = ref<string>('');
-const { data: products, pending } = useAsyncData(
+const { data: products, pending } = useAsyncData<Product[]>(
   'products',
   async function () {
     const { data } = await $fetch<ApiResponse<Product[]>>('/api/products', {
@@ -33,6 +35,20 @@ const { data: products, pending } = useAsyncData(
           updatedAt: formatDate(updatedAt as string),
         };
       });
+    },
+  },
+);
+const { data: categories } = useAsyncData<Record<string, Category>>(
+  'categories',
+  async function () {
+    if (productStore.isLoaded) { return productStore.categories }
+
+    await productStore.refreshCategories();
+    return productStore.categories;
+  },
+  {
+    default() {
+      return productStore.isLoaded ? productStore.categories : {};
     },
   },
 );
@@ -66,7 +82,7 @@ table.table.table-zebra.border
       th Name
       th Category
       th Slug
-      th Description
+      th Images
       th Date
       th
   tbody
@@ -75,20 +91,19 @@ table.table.table-zebra.border
         span.loading.loading-spinner.mr-2
         | Loading...
     tr(v-for="(item, index) in products")
-      td {{ item.name }}
-      td {{ item.category }}
+      td
+        nuxt-link.link.link-primary(
+          :to="'/admin/product/' + item.id"
+        ) {{ item.name }}
+      td {{ categories[item.category].name }}
       td {{ item.slug }}
-      td {{ item.description }}
+      td
       td.text-xs
         time(:datetime="item.createdAt") {{ item.createdAt }}
         span.mx-1 /
         time(:datetime="item.createdAt") {{ item.updatedAt }}
       td
         .join
-          nuxt-link.btn.btn-sm.btn-success.join-item(
-            :to="'/admin/product/' + item.id"
-          )
-            i.bi.bi-pen
           button.btn.btn-sm.btn-error.join-item(
             type="button"
             :disabled="item.isSaving"

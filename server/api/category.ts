@@ -1,4 +1,5 @@
 import { H3Event } from 'h3';
+import omit from 'lodash/omit';
 import { db } from '~/db/kysely';
 import { Category, NewCategory, Specification, TABLE_CATEGORY, TABLE_SPEC } from '~/db/types';
 import { ApiResponse } from '~/types';
@@ -19,15 +20,17 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
     .returning('id')
     .executeTakeFirstOrThrow();
 
-  await db
-    .insertInto(TABLE_SPEC)
-    .values(specifications.map((spec) => {
-      return {
-        ...spec,
-        category: category.id,
-      };
-    }))
-    .execute();
+  if (specifications.length) {
+    await db
+      .insertInto(TABLE_SPEC)
+      .values(specifications.map((spec) => {
+        return {
+          ...omit(spec, 'isChanged', 'isDeleted'),
+          category: category.id,
+        };
+      }))
+      .execute();
+  }
 
   return {
     code: 0,

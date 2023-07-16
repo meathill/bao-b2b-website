@@ -17,7 +17,7 @@ export function createCategory(): NewCategory {
     name: '',
     description: '',
     slug: '',
-    parent: 0,
+    parent: -1,
     specifications: [],
   };
 }

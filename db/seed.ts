@@ -45,7 +45,7 @@ export async function createProduct(): Promise<void> {
     .addColumn('id', 'serial', cb => cb.primaryKey())
     .addColumn('name', 'varchar(255)', cb => cb.notNull())
     .addColumn('slug', 'varchar(255)', cb => cb.notNull().unique())
-    .addColumn('description', 'varchar(255)')
+    .addColumn('description', 'text')
     .addColumn('specification', 'json')
     .addColumn('images', 'varchar[]')
     .addColumn(

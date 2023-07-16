@@ -2,7 +2,9 @@
 import { createCategory, createSpecification } from '~/utils';
 import type { Category, EditedSpecification, Specification } from '~/db/types';
 import type { ApiResponse } from '~/types';
+import { useProductStore } from '~/store';
 
+const productStore = useProductStore();
 const route = useRoute();
 const categoryId = Number(route.params.id);
 const isNew = isNaN(categoryId);
@@ -10,7 +12,6 @@ const isNew = isNaN(categoryId);
 const isSaving = ref<boolean>(false);
 const status = ref<boolean>(false);
 const message = ref<string>('');
-const { data: categories } = useNuxtData('/api/categories');
 const { data: category, pending } = useAsyncData(
   '/api/category/' + route.params.id,
   async function () {
@@ -37,9 +38,21 @@ const { data: category, pending } = useAsyncData(
   },
   {
     default() {
-      return (categories.value || [])
-        .find((cat: Category) => cat.id === Number(route.params.id)) ||
-        createCategory();
+      return createCategory();
+    },
+  },
+);
+
+const { data: categories } = useAsyncData<Record<string, Category>>(
+  'categories',
+  async function () {
+    if (productStore.isLoaded) { return productStore.categories }
+    await productStore.refreshCategories();
+    return productStore.categories;
+  },
+  {
+    default() {
+      return productStore.isLoaded ? productStore.categories : {};
     },
   },
 );
@@ -130,7 +143,12 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         name="categoryParent"
         v-model="category.parent"
       )
-        option(value="") -- No Parent --
+        option(:value="-1") -- No Parent --
+        option(
+          v-for="(cate, cateId) in categories"
+          :key="cateId"
+          :value="cateId"
+        ) {{cate.name}}
     .form-control
       label.label
         span.label-text Description

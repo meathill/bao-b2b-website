@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { RowItem, ApiResponse } from '~/types';
+import type { RowItem } from '~/types';
 import type { Category } from '~/db/types';
 import { formatDate } from '~/utils';
 import { useProductStore } from '~/store';
@@ -8,22 +8,18 @@ type LocalRowItem = Category & RowItem;
 
 const productStore = useProductStore();
 const message = ref<string>('');
-const total = ref<number>(0);
 
-const { data: categories, pending } = useAsyncData('categories',
+const { data: categories, pending } = useAsyncData<Category[]>(
+  'categories',
   async function () {
-    try {
-      const { data, meta } = await $fetch<ApiResponse<Category[]>>('/api/categories');
-      total.value = meta?.total || 0;
-      productStore.setCategories(data as Category[]);
-      return data;
-    } catch (e) {
-      message.value = (e as Error).message || String(e);
+    if (productStore.isLoaded) {
+      return Object.values(productStore.categories);
     }
+    return await productStore.refreshCategories();
   },
   {
     default() {
-      return [];
+      return productStore.isLoaded ? Object.values(productStore.categories) : [];
     },
     transform(from: Category[]): LocalRowItem[] {
       return from.map((category: Category) => {
@@ -77,7 +73,7 @@ table.table.table-zebra.border
         | Loading...
     tr(v-for="(item, index) in categories")
       td
-        nuxt-link.link(
+        nuxt-link.link.link-primary(
           :to="'/admin/category/' + item.id"
         ) {{ item.name }}
       td {{ item.parent }}
@@ -89,10 +85,6 @@ table.table.table-zebra.border
         time(:datetime="item.updatedAt") {{ item.updatedAt }}
       td
         .join
-          nuxt-link.btn.btn-sm.btn-success.join-item(
-            :to="'/admin/category/' + item.id"
-          )
-            i.bi.bi-pen
           button.btn.btn-sm.btn-error.join-item(
             type="button"
             :disabled="item.isSaving"
