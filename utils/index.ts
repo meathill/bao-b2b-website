@@ -14,7 +14,6 @@ export function enumToOptions(from: Record<string, string | number>): Record<str
 
 export function createCategory(): NewCategory {
   return {
-    id: -1,
     name: '',
     description: '',
     slug: '',
@@ -25,7 +24,6 @@ export function createCategory(): NewCategory {
 
 export function createSpecification(category = -1): EditedSpecification {
   return {
-    id: -1,
     name: '',
     type: SpecificationTypes.Input,
     description: '',
@@ -36,18 +34,18 @@ export function createSpecification(category = -1): EditedSpecification {
 
 export function createProduct(): NewProduct {
   return {
-    id: -1,
     name: '',
     slug: '',
     description: '',
-    category: 0,
+    category: -1,
     more: [],
+    specifications: [],
   };
 }
 
 export function createProductSpecification(): ProductSpecification {
   return {
-    label: '',
+    name: '',
     value: '',
   };
 }

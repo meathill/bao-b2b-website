@@ -1,11 +1,12 @@
 import { Generated, ColumnType, Selectable, Insertable, Updateable } from 'kysely';
 import { SpecificationTypes } from '~/data';
+import { ProductSpecification } from '~/types';
 
 export const TABLE_CATEGORY = 'category';
 export const TABLE_PRODUCT = 'product';
 export const TABLE_SPEC = 'specification';
 export const TABLE_QUOTATION = 'quotation';
-export const TABLE_PRODUCT_SPEC = 'product_spec';
+export const TABLE_PRODUCT_SPEC = 'productSpec';
 
 export enum Country {
   China = 'China',
@@ -35,7 +36,9 @@ export interface SpecificationTable {
   description: string;
   image?: string;
 }
-export type Specification = Selectable<SpecificationTable>;
+export type Specification = Selectable<SpecificationTable> & {
+  value: string;
+};
 export type NewSpecification = Insertable<Specification>;
 export type EditedSpecification = Updateable<SpecificationTable> & {
   isChanged?: boolean;
@@ -57,24 +60,28 @@ export type EditedCategory = Updateable<Category> & {
   specifications: EditedSpecification[];
 };
 
-interface ProductTable extends BasicRecord {
-  name: string;
-  slug: string;
-  description: string;
-  images: string[];
-  category: number;
-  specifications: Record<string, string>;
-}
-export type Product = Selectable<ProductTable>;
-export type NewProduct = Insertable<Product>;
-export type EditedProduct = Updateable<ProductTable>;
-
 interface ProductSpecTable {
   id: Generated<number>;
   productId: number;
   specId: number;
   value: string;
 }
+export type ProductSpec = Selectable<ProductSpecTable>;
+
+interface ProductTable extends BasicRecord {
+  name: string;
+  slug: string;
+  description: string;
+  images: string[];
+  category: number;
+  more: ProductSpecification[];
+  specifications: ProductSpec[];
+}
+export type Product = Selectable<ProductTable> & {
+  specifications: ProductSpecification[];
+};
+export type NewProduct = Insertable<Product>;
+export type EditedProduct = Updateable<Product>;
 
 type QuotationItem = {
   productId: number;

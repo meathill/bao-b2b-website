@@ -2,7 +2,7 @@
 import type { RowItem, ApiResponse } from '~/types';
 import type { Category } from '~/db/types';
 import { formatDate } from '~/utils';
-import useProductStore from '~/store/product';
+import { useProductStore } from '~/store';
 
 type LocalRowItem = Category & RowItem;
 

@@ -14,6 +14,6 @@ export type ApiResponse<T> = {
 };
 
 export type ProductSpecification = {
-  label: string;
+  name: string;
   value: string;
 };

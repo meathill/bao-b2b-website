@@ -1,23 +1,26 @@
 <script setup lang="ts">
 import { createProduct, createProductSpecification } from '~/utils';
-import type { Category, Product } from '~/db/types';
+import type { Category, Product, ProductSpec, Specification } from '~/db/types';
 import type { ApiResponse } from '~/types';
 
 const route = useRoute();
 const isNew = route.params.id === 'new';
+const productName = ref<HTMLInputElement>();
+const specName = ref<HTMLInputElement[]>();
 
 const isSaving = ref<boolean>(false);
+const isLoadingSpec = ref<boolean>(false);
 const status = ref<boolean>(false);
 const message = ref<string>('');
 const { data: products } = useNuxtData('/api/products');
-const { data: nuxtCategories } = useNuxtData('categories');
 const { data: product, pending } = useAsyncData(
   '/api/product/' + route.params.id,
   async function () {
     if (isNew) { return createProduct() }
 
     try {
-      return await $fetch('/api/product/' + route.params.id);
+      const { data: product } = await $fetch<ApiResponse<Product>>('/api/product/' + route.params.id);
+      return product;
     } catch (e) {
       message.value = (e as Error).message || String(e);
       return createProduct();
@@ -34,41 +37,85 @@ const { data: product, pending } = useAsyncData(
 const { data: categories } = useAsyncData<Category[]>(
   'categories',
   async function () {
-    if (nuxtCategories.value) { return nuxtCategories.value }
-
     const { data } = await $fetch<ApiResponse<Category[]>>('/api/categories');
-
     return data || [];
   },
   {
     default() {
-      return nuxtCategories.value || [];
-    },
-    async onResponse() {
-      await refreshNuxtData('categories');
+      return [];
     },
   },
 );
-const requiredSpecifications = computed<Specification[]>(() => {
-  return categories.value
-    .find((cat: Category) => cat.id === product.value.categoryId)
-    ?.specifications || [];
+const requiredSpecs = ref<Specification[]>([]);
+const productSpecValues = computed<Record<string, string>>(() => {
+  return product.value
+    ? product.value?.specifications?.reduce((acc: Record<string, string>, spec: ProductSpec) => {
+      acc[spec.specId] = spec.value;
+      return acc;
+    }, {})
+    : {};
+});
+
+watch(product, (value) => {
+  if (value) {
+    onCategoryChange(value.category);
+  }
 });
 
 async function doSave(event: Event): Promise<void> {
   if ((event.target as HTMLFormElement).matches(':invalid')) { return }
-  if (isSaving.value) { return }
+  if (isSaving.value || isLoadingSpec.value) { return }
 
   isSaving.value = true;
-  await $fetch('/api/product', {
+  const { data } = await $fetch<ApiResponse<number>>('/api/product', {
     method: 'POST',
-    body: product.value,
+    body: {
+      ...product.value,
+      specifications: requiredSpecs.value.map((spec: Specification) => {
+        return {
+          specId: spec.id,
+          value: spec.value,
+        };
+      }),
+    },
   });
+  if (isNew) {
+    const router = useRouter();
+    await router.replace('/admin/product/' + data);
+  }
   isSaving.value = false;
 }
-function doAddSpecification(): void {
+async function doAddSpecification(): Promise<void> {
   product.value.more.push(createProductSpecification());
+  await nextTick();
+  const input = specName.value && specName.value[0] as HTMLInputElement;
+  input?.focus();
 }
+async function onCategoryChange(event: Event | number): Promise<void> {
+  if (isLoadingSpec.value) { return }
+
+  isLoadingSpec.value = true;
+  const category = typeof event === 'number'
+    ? event
+    : (event.target as HTMLSelectElement).value;
+  const { data } = await $fetch<ApiResponse<Specification[]>>(
+    '/api/specifications?category=' + category,
+  );
+  requiredSpecs.value.length = 0;
+  const productSpecs = (data || []).map((spec) => {
+    const value = productSpecValues.value[spec.id];
+    return {
+      ...spec,
+      value,
+    };
+  });
+  requiredSpecs.value.push(...productSpecs);
+  isLoadingSpec.value = false;
+}
+
+onMounted(() => {
+  productName.value?.focus();
+});
 </script>
 
 <template lang="pug">
@@ -97,6 +144,7 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
       label.label
         span.label-text Name
       input.input.input-bordered(
+        ref="productName"
         required
         name="productName"
         placeholder="Category name"
@@ -125,8 +173,13 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         span.label-text Category
       select.select.select-bordered(
         name="productCategory"
+        :disabled="isLoadingSpec"
         v-model="product.category"
+        @change="onCategoryChange"
       )
+        option.disabled(
+          :value="-1"
+        ) === Select category ===
         option(
           v-for="item in categories"
           :key="item.id"
@@ -134,18 +187,37 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         ) {{item.name}}
   .flex-1
     label.label
-      span.label-text Specifications
+      span.label-text Category Specifications
+    .pl-4(v-if="isLoadingSpec")
+      span.loading.loading-spinner
+    .grid.grid-cols-2.gap-2.mb-4(v-else-if="requiredSpecs.length")
+      template(
+        v-for="item in requiredSpecs"
+        :key="item.name"
+      )
+        label.label
+          span.label-text {{item.name}}
+        .form-control
+          input.input.input-bordered(
+            required
+            v-model="item.value"
+          )
+    p.text-gray-400.text-sm.mb-4.indent-4(v-else) No specifications for this category
+
+    label.label
+      span.label-text Product Specifications
     .grid.grid-cols-2.gap-2
       label.label
         span.label-text Name
       label.label
-        span.label-text Type
+        span.label-text Value
       template(
-        v-for="item in product.more"
-        :key="item.name"
+        v-for="(item, index) in product.more"
+        :key="index"
       )
         .form-control
           input.input.input-bordered(
+            ref="specName"
             required
             v-model="item.name"
           )

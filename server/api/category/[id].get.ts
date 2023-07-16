@@ -19,11 +19,6 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
     .where('id', '=', categoryId)
     .where('deletedAt', 'is', null)
     .executeTakeFirst();
-  const specifications: Specification[] = await db
-    .selectFrom(TABLE_SPEC)
-    .where('category', '=', categoryId)
-    .selectAll()
-    .execute();
   if (!category) {
     throw createError({
       statusCode: 404,
@@ -31,7 +26,11 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
     });
   }
 
-  category.specifications = specifications;
+  category.specifications = await db
+    .selectFrom(TABLE_SPEC)
+    .where('category', '=', categoryId)
+    .selectAll()
+    .execute();
 
   return {
     code: 0,

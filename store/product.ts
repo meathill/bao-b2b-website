@@ -1,7 +1,7 @@
 import { Category } from '~/db/types';
 import { ApiResponse } from '~/types';
 
-const useProductStore = defineStore('product', () => {
+export const useProductStore = defineStore('product', () => {
   const categories = ref<Record<string, Category>>({});
 
   async function refreshCategories() {
@@ -20,5 +20,3 @@ const useProductStore = defineStore('product', () => {
     setCategories,
   };
 });
-
-export default useProductStore;
