@@ -18,3 +18,8 @@ export type ProductSpecification = {
   name: string;
   value: string;
 };
+
+export type PreSignedUrl = {
+  preSignedUrl: string;
+  objectKey: string;
+};

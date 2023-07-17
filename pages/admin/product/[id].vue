@@ -153,9 +153,9 @@ header.flex.items-center.pb-4.mb-4.border-b
 form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
   .flex-none(class="w-1/2")
     .form-control.mb-4
-      label.label
+      label.label(for="product-name")
         span.label-text Name
-      input.input.input-bordered(
+      input#product-name.input.input-bordered(
         ref="productName"
         required
         name="productName"
@@ -164,18 +164,18 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         @change="onNameChange"
       )
     .form-control.mb-4
-      label.label
+      label.label(for="product-slug")
         span.label-text Slug
-      input.input.input-bordered(
+      input#product-slug.input.input-bordered(
         required
         name="productSlug"
         placeholder="Category slug"
         v-model="product.slug"
       )
     .form-control.mb-4
-      label.label
+      label.label(for="product-description")
         span.label-text Description
-      textarea.input.input-bordered.h-24(
+      textarea#product-description.input.input-bordered.h-24(
         name="productDescription"
         placeholder="Category description"
         rows="3"
@@ -184,9 +184,9 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
       label.label
         span.label-text-alt Markdown supported
     .form-control.mb-4
-      label.label
+      label.label(for="product-category")
         span.label-text Category
-      select.select.select-bordered(
+      select#product-category.select.select-bordered(
         name="productCategory"
         :disabled="isLoadingSpec"
         v-model="product.category"
@@ -200,6 +200,13 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
           :key="cateId"
           :value="cateId"
         ) {{cate.name}}
+    .form-control.mb-4
+      label.label
+        span.label-text Images
+      file-uploader(
+        v-model="product.images"
+      )
+
   .flex-1
     label.label
       span.label-text Category Specifications

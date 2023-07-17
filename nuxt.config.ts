@@ -36,6 +36,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       version: pkg.version,
+      r2Domain: process.env.R2_DOMAIN,
     },
   },
   postcss,
