@@ -23,6 +23,8 @@ const localValue = computed<string[]>({
     emit('update:modelValue', value);
   },
 });
+const types = ref<boolean[]>([]);
+const uploadings = ref<boolean[]>([]);
 
 function doAddFile(): void {
   localValue.value = [...localValue.value, ''];
@@ -60,20 +62,35 @@ async function onFileChange(event: Event, index: number): Promise<void> {
 
 <template lang="pug">
 .file-uploader
-  .mb-2.flex.gap-2(
+  .mb-2.flex.gap-2.items-center(
     v-for="(file, index) in localValue"
     :key="index"
   )
     img.w-16(
-      v-if="file"
+      v-if="!types[index] && file"
       :src="file"
       alt="file"
     )
+    input.input.input-bordered.w-full.max-w-xs(
+      v-if="types[index]"
+      type="url"
+      v-model="localValue[index]"
+    )
     input.file-input.w-full.max-w-xs(
+      v-else
       type="file"
       accept="image/*"
       @change="onFileChange($event, index)"
     )
+    .w-16.text-center.loading.loading-spinner(
+      v-if="uploadings[index]"
+    )
+    label.label.ml-auto
+      span.label-text.mr-1 {{types[index] === true ? 'URL' : 'File'}}
+      input.toggle(
+        type="checkbox"
+        v-model="types[index]"
+      )
     button.btn.btn-sm.btn-error(
       type="button"
       @click="doRemove(index)"

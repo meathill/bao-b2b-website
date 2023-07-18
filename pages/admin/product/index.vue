@@ -98,6 +98,20 @@ table.table.table-zebra.border
       td {{ categories[item.category].name }}
       td {{ item.slug }}
       td
+        template(
+          v-for="image in item.images"
+          :key="image"
+        )
+          img.w-12(
+            v-if="/\.(jpg|png|webp)$/.test(image)"
+            :src="image"
+          )
+          nuxt-link(
+            v-else
+            :to="image"
+            target="_blank"
+          )
+            i.bi.bi-video
       td.text-xs
         time(:datetime="item.createdAt") {{ item.createdAt }}
         span.mx-1 /
