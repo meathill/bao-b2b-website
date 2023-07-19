@@ -20,6 +20,7 @@ export async function createCategory(): Promise<void> {
     .addColumn('parent', 'int8')
     .addColumn('description', 'varchar(255)')
     .addColumn('image', 'varchar(255)')
+    .addColumn('isHomepage', 'boolean')
     .addColumn(
       'createdAt',
       sql('timestamp with time zone'),

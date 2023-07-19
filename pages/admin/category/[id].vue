@@ -118,7 +118,7 @@ header.flex.items-center.pb-4.mb-4.border-b
 
 form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
   .flex-none(class="w-1/2")
-    .form-control
+    .form-control.mb-4
       label.label
         span.label-text Name
       input.input.input-bordered(
@@ -127,7 +127,7 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         placeholder="Category name"
         v-model="category.name"
       )
-    .form-control
+    .form-control.mb-4
       label.label
         span.label-text Slug
       input.input.input-bordered(
@@ -136,7 +136,7 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         placeholder="Category slug"
         v-model="category.slug"
       )
-    .form-control
+    .form-control.mb-4
       label.label
         span.label-text Parent
       select.select.select-bordered(
@@ -149,7 +149,7 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
           :key="cateId"
           :value="cateId"
         ) {{cate.name}}
-    .form-control
+    .form-control.mb-4
       label.label
         span.label-text Description
       textarea.input.input-bordered.h-24(
@@ -158,6 +158,13 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         rows="3"
         v-model="category.description"
       )
+    .form-control.mb-4
+      label.label.cursor-pointer.justify-start.gap-4
+        span.label-text Show on Homepage
+        input.toggle(
+          type="checkbox"
+          v-model="category.isHomepage"
+        )
   .flex-1
     specification-editor.mb-4(
       v-for="(item, index) in specifications"

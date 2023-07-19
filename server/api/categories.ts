@@ -18,7 +18,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
     .select(count('id').as('total'))
     .execute();
   const results = await query
-    .select(['id', 'name', 'slug', 'parent', 'description', 'createdAt', 'updatedAt'])
+    .select(['id', 'name', 'slug', 'parent', 'description', 'isHomepage', 'createdAt', 'updatedAt'])
     .execute();
 
   return {

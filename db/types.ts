@@ -51,6 +51,7 @@ export interface CategoryTable extends BasicRecord {
   parent: number;
   description: string;
   image: string;
+  isHomepage: boolean;
 }
 export type Category = Selectable<CategoryTable> & {
   specifications: Specification[];

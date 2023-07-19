@@ -1,5 +1,25 @@
 <script setup lang="ts">
+import { useProductStore } from '~/store';
+import type { Category } from '~/db/types';
 
+const productStore = useProductStore();
+
+const { data: categories } = useAsyncData<Category[]>(
+  'categories',
+  async function () {
+    const categories = productStore.isLoaded
+      ? Object.values(productStore.categories)
+      : await productStore.refreshCategories();
+    return categories.filter(category => category.isHomepage);
+  },
+  {
+    default() {
+      return productStore.isLoaded
+        ? Object.values(productStore.categories).filter(category => category.isHomepage)
+        : [];
+    },
+  },
+);
 </script>
 
 <template lang="pug">
@@ -8,12 +28,11 @@ main.flex.container.mx-auto.pt-4.gap-4
     header.bg-base-300.px-4.py-2
       h2.text-xl.font-semibold Product Category
     ul.menu
-      li
-        nuxt-link(to="/category/1") Product 1
-      li
-        nuxt-link(to="/category/2") Product 2
-      li
-        nuxt-link(to="/category/3") Product 3
+      li(
+        v-for="item in categories"
+        :key="item.id"
+      )
+        nuxt-link(:to="'/category/' + item.id") {{item.name}}
     nuxt-link.block.px-4.py-1.flex.justify-between.bg-base-200.border-t.mt-auto(
       to="/category"
     ) View all
