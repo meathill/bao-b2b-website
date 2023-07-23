@@ -107,12 +107,18 @@ main.container.mx-auto.py-4
         :key="item.id"
       )
         .product-thumbnail.w-80
-          img(
-            :src="item.images[0]"
-            :alt="item.name"
+          nuxt-link(
+            :to="'/product/' + item.id"
           )
+            img(
+              :src="item.images[0]"
+              :alt="item.name"
+            )
         .flex-1
-          h2.text-xl.font-semibold.mb-4 {{item.name}}
+          h2.text-xl.font-semibold.mb-4
+            nuxt-link(
+              :to="'/product/' + item.id"
+            ) {{item.name}}
           p {{item.digest}}
       .absolute.top-0.left-0.right-0.bottom-0.bg-white.opacity-75.z-10.flex.justify-center.items-center(
         v-if="pending"

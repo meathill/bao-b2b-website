@@ -24,7 +24,7 @@ const { data: categories } = useAsyncData<Category[]>(
 
 <template lang="pug">
 main.container.mx-auto.py-4
-  h1.text-2xl.font-bold.mb-4 Cateogries
+  h1.text-2xl.font-bold.mb-4.pb-4.border-b Cateogries
   .grid.grid-cols-3.gap-4
     nuxt-link.border.p-4(
       v-for="item in categories"

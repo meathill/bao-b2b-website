@@ -69,7 +69,7 @@ export function formatFilter(filter: Record<string, string[]>): string {
 }
 
 export function filterToObject(str: string): null | Record<string, string[]> {
-  if (!str) return null;
+  if (!str) { return null }
 
   const arr = str.split('||');
   return arr.reduce((acc, item) => {
