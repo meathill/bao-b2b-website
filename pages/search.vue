@@ -9,7 +9,6 @@ const { data, pending } = useAsyncData(
   'search',
   async function () {
     const { data } = await $fetch<ApiResponse<Product[]>>('/api/search?search=' + search);
-    console.log('xxx', data);
     return data as Product[];
   },
   {

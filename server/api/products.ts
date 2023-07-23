@@ -1,7 +1,8 @@
 import { H3Event } from 'h3';
-import { Product, TABLE_PRODUCT } from '~/db/types';
+import { Product, TABLE_PRODUCT, TABLE_PRODUCT_SPEC } from '~/db/types';
 import { db } from '~/db/kysely';
 import { ApiResponse } from '~/types';
+import { filterToObject } from '~/utils';
 
 const { count } = db.fn;
 
@@ -16,16 +17,32 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
   const {
     search = '',
     category = '',
+    filter,
   } = params;
+  const specFilter: Record<string, string[]> | null = filter ? filterToObject(filter as string) : null;
 
   let query = db.selectFrom(TABLE_PRODUCT)
     .where('deletedAt', 'is', null);
-  if (search) {
-    query = query.where('name', 'like', `%${search}%`);
+  if (specFilter) {
+    console.log('xxx', specFilter);
+    const productIds: number[] = [];
+    for (const cateId in specFilter) {
+      const results = await db.selectFrom(TABLE_PRODUCT_SPEC)
+        .where('specId', '=', Number(cateId))
+        .where('value', 'in', specFilter[cateId])
+        .select(['productId'])
+        .execute();
+      productIds.push(...results.map(item => item.productId));
+    }
+    query = query.where('id', 'in', productIds);
   }
   if (category) {
     query = query.where('category', '=', Number(category));
   }
+  if (search) {
+    query = query.where('name', 'like', `%${search}%`);
+  }
+
   const total = await query
     .select(count('id').as('total'))
     .execute();

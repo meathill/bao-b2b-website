@@ -3,5 +3,6 @@
 </script>
 
 <template lang="pug">
-h1 Products
+main.container.mx-auto.py-4
+  h1.text-2xl.font-bold.mb-4 Products
 </template>
