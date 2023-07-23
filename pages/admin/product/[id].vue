@@ -159,7 +159,7 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         ref="productName"
         required
         name="productName"
-        placeholder="Category name"
+        placeholder="Product name"
         v-model="product.name"
         @change="onNameChange"
       )
@@ -169,15 +169,24 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
       input#product-slug.input.input-bordered(
         required
         name="productSlug"
-        placeholder="Category slug"
+        placeholder="Product slug"
         v-model="product.slug"
+      )
+    .form-control.mb-4
+      label.label(for="product-digest")
+        span.label-text Digest
+      textarea#product-digest.textarea.textarea-bordered.h-12(
+        name="productDigest"
+        placeholder="Product digest"
+        rows="2"
+        v-model="product.digest"
       )
     .form-control.mb-4
       label.label(for="product-description")
         span.label-text Description
-      textarea#product-description.input.input-bordered.h-24(
+      textarea#product-description.textarea.textarea-bordered.h-24(
         name="productDescription"
-        placeholder="Category description"
+        placeholder="Product description"
         rows="3"
         v-model="product.description"
       )

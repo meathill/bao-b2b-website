@@ -73,6 +73,7 @@ interface ProductTable extends BasicRecord {
   name: string;
   slug: string;
   description: string;
+  digest: string;
   images: string[];
   category: number;
   more: ProductSpecification[];
