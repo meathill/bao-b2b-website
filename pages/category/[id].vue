@@ -81,6 +81,10 @@ function onToggleSpec(cateId: number, option: string): Promise<void> {
 
 <template lang="pug">
 main.container.mx-auto.py-4
+  breadcrumbs(
+    :categpry="category.parent"
+    :title="category.name"
+  )
   h1.text-2xl.font-bold.mb-4 {{category.name}}
   .flex.gap-8
     aside.w-72.flex-none

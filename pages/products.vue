@@ -18,6 +18,7 @@ const { data: products, pending, refresh } = useAsyncData(
 
 <template lang="pug">
 main.container.mx-auto.py-4
+  breadcrumbs
   h1.text-2xl.font-bold.mb-4.pb-4.border-b Products
   .grid.grid-cols-3.gap-4
     nuxt-link.border.p-4(
@@ -27,6 +28,7 @@ main.container.mx-auto.py-4
       :to="'/product/' + item.id"
     )
       img.block.mb-2(
+        v-if="item.images && item.images.length"
         :src="item.images[0]"
         :alt="item.name"
       )

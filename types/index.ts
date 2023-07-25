@@ -23,3 +23,7 @@ export type PreSignedUrl = {
   preSignedUrl: string;
   objectKey: string;
 };
+
+export type IdRequest = {
+  id: number;
+};

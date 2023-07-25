@@ -33,6 +33,8 @@ export default defineNuxtConfig({
       },
     ],
   ],
+  content: {
+  },
   runtimeConfig: {
     public: {
       version: pkg.version,
