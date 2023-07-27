@@ -75,7 +75,9 @@ main.flex.container.mx-auto.pt-4.gap-4
     .flex.flex-1
       nuxt-link.flex-1.px-4.py-2.border-r.flex.flex-col.items-center(
         v-for="item in products"
+        class="hover:bg-base-200"
         :key="item.id"
+        :to="'/product/' + item.id"
       )
         img.block.w-24(
           v-if="item.images?.length"

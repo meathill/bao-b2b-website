@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useProductStore } from '~/store';
 import type { ApiResponse } from '~/types';
 import type { Category } from '~/db/types';
 
@@ -9,15 +8,12 @@ type Props = {
 };
 const props = defineProps<Props>();
 
-const route = useRoute();
-const productStore = useProductStore();
-
 const { data } = useAsyncData(
   async function () {
-    if (!props.category || !route.path.startsWith('/category')) {
+    if (!props.category) {
       return [];
     }
-    const { data } = await $fetch < ApiResponse<Partial<Category>[]>('/api/category/find-path', {
+    const { data } = await $fetch<ApiResponse<Partial<Category[]>>>('/api/category/find-path', {
       method: 'POST',
       body: {
         id: props.category,
@@ -31,7 +27,6 @@ const { data } = useAsyncData(
     },
   },
 );
-
 </script>
 
 <template lang="pug">
@@ -43,15 +38,14 @@ const { data } = useAsyncData(
       )
         i.bi.bi-house-fill.mr-2
         | Home
-    template(v-if="!props.title")
-      li(
-        v-for="item in data"
-        :key="item.id"
-      )
-        nuxt-link(
-          :to="'/category/' + item.id"
-        ) {{item.name}}
-    li(v-else) {{props.title}}
+    li(
+      v-for="item in data"
+      :key="item.id"
+    )
+      nuxt-link(
+        :to="'/category/' + item.id"
+      ) {{item.name}}
+    li(v-if="props.title") {{props.title}}
 </template>
 
 <script lang="ts">

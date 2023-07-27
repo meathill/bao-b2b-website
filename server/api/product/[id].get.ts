@@ -1,9 +1,9 @@
 import { H3Event } from 'h3';
+import { ApiResponse } from '~/types';
 import { Product, TABLE_PRODUCT, TABLE_PRODUCT_SPEC } from '~/db/types';
 import { db } from '~/db/kysely';
-import { ProductSpecification } from '~/types';
 
-export default defineEventHandler(async function (event: H3Event): Promise<Product> {
+export default defineEventHandler(async function (event: H3Event): Promise<ApiResponse<Product>> {
   const id = event.context.params?.id;
   if (!id || isNaN(Number(id))) {
     throw createError({

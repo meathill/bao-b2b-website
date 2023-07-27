@@ -10,20 +10,24 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
   const body = (await readBody(event)) as IdRequest;
   const { id } = body;
   const result = [];
-  let category = (await db.selectFrom(TABLE_CATEGORY)
+  let category: Category | null = (await db.selectFrom(TABLE_CATEGORY)
+    .select(['id', 'name', 'parent'])
     .where('id', '=', id)
     .executeTakeFirst()) as Category;
   while (category) {
     const { id, name, slug, parent } = category;
-    result.push({
+    result.unshift({
       id,
       name,
       parent,
     });
-    if (parent) {
+    if (parent && Number(parent)) {
       category = (await db.selectFrom(TABLE_CATEGORY)
+        .select(['id', 'name', 'parent'])
         .where('id', '=', parent)
         .executeTakeFirst()) as Category;
+    } else {
+      category = null;
     }
   }
   return {
