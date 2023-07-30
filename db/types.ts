@@ -83,24 +83,26 @@ export type Product = Selectable<ProductTable>;
 export type NewProduct = Insertable<Product>;
 export type EditedProduct = Updateable<Product>;
 
-type QuotationItem = {
+export type QuotationItem = {
   productId: number;
+  productName: string;
   price: number;
   quantity: number;
-  description: string;
+  comment: string;
 };
 
-interface QuotationTable extends BasicRecord {
-  id: Generated<number>;
-  products: QuotationItem[];
+export interface ClientInfo {
   companyName: string;
   contactName: string;
   phone: string;
   email: string;
-  fax: string;
-  country: Country;
-  address: string;
-  comments: string;
+  country: string;
+}
+
+interface QuotationTable extends BasicRecord, ClientInfo {
+  id: Generated<number>;
+  products: QuotationItem[];
+  comment: string;
   status: QuotationStatus;
 }
 

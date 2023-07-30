@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { parse } from 'marked';
+import { marked } from 'marked';
 import type { ApiResponse } from '~/types';
 import type { Product } from '~/db/types';
 
 const route = useRoute();
 const idOrSlug = route.params.id;
-const Tabs = ['Description', 'Specification', 'Reviews'];
+const Tabs = ['Description', 'Specification'];
 
 const { data: product } = useAsyncData<ApiResponse<Product>>(
   'product-' + idOrSlug,
@@ -68,14 +68,12 @@ main.container.mx-auto.py-4
           dt.text-right(class="text-neutral/75") {{item.name}}:
           dd.font-semibold {{item.value}}
 
-      label.btn.btn-primary.ml-12.cursor-pointer(
-        for="request-quotation"
+      request-quotation(
+        :product="product"
       )
-        i.bi.bi-clipboard2-plus
-        | Request quotation
 
   .tabs
-    .tab.tab-lifted.tab-lg.cursor-pointer(
+    .tab.tab-lifted.tab-lg.cursor-pointer.static(
       v-for="(item, index) in Tabs"
       :key="index"
       :class="{'tab-active': currentTab === index}"
@@ -87,7 +85,7 @@ main.container.mx-auto.py-4
       class="lg:prose-lg",
     )
       article(
-        v-html="parse(product.description)"
+        v-html="marked.parse(product.description)"
       )
   .tab-content.pt-4(v-else-if="currentTab === 1")
     table.table.border.max-w-4xl.mx-auto

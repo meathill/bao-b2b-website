@@ -1,6 +1,6 @@
 import pickBy from 'lodash/pickBy';
 import isNil from 'lodash/isNil';
-import { EditedSpecification, NewCategory, NewProduct } from '~/db/types';
+import { ClientInfo, Country, EditedSpecification, NewCategory, NewProduct, QuotationItem } from '~/db/types';
 import { SpecificationTypes } from '~/data';
 import { ProductSpecification } from '~/types';
 
@@ -45,6 +45,26 @@ export function createProductSpecification(): ProductSpecification {
   return {
     name: '',
     value: '',
+  };
+}
+
+export function createQuotationItem(): QuotationItem {
+  return {
+    productId: 0,
+    productName: '',
+    price: 1,
+    quantity: 1,
+    comment: '',
+  };
+}
+
+export function createClientInfo(): ClientInfo {
+  return {
+    companyName: '',
+    contactName: '',
+    phone: '',
+    email: '',
+    country: '',
   };
 }
 

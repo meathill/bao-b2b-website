@@ -1,4 +1,10 @@
 <script lang="ts" setup>
+import { useQuotationStore } from '~/store';
+
+const quotationStore = useQuotationStore();
+const route = useRoute();
+const isAdmin = route.path.startsWith('/admin');
+
 const search = ref<string>('');
 
 function doSearch(): void {
@@ -27,15 +33,18 @@ function doSearch(): void {
         placeholder="Search..."
         v-model="search"
       )
-      .indicator
-        button.btn.btn-secondary.join-item.text-white Search
+      button.btn.btn-secondary.join-item.text-white Search
 
-    request-quotation
+    nuxt-link.btn.btn-primary(
+      v-if="!isAdmin"
+      to="/rfq"
+    ) Request Quotation
+      template(v-if="quotationStore.quotationNumber") &nbsp;({{quotationStore.quotationNumber}})
 
 .navbar.w-full.bg-primary.text-primary-content
   .container.mx-auto
     ul.menu.menu-horizontal
-      li
+      li.z-0
         nuxt-link(to="/") Home
       li
         nuxt-link(to="/about") About

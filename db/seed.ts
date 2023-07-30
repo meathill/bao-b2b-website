@@ -122,9 +122,8 @@ export async function createQuotation(): Promise<void> {
     .addColumn('contactName', 'varchar', cb => cb.notNull())
     .addColumn('phone', 'varchar(20)', cb => cb.notNull())
     .addColumn('email', 'varchar(100)', cb => cb.notNull())
-    .addColumn('fax', 'varchar(20)')
     .addColumn('country', 'int2')
-    .addColumn('comments', 'text')
+    .addColumn('comment', 'text')
     .addColumn('status', 'int2', cb => cb.defaultTo(0))
     .addColumn(
       'createdAt',
