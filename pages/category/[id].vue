@@ -4,13 +4,13 @@ import type { Category, Product, ProductSpec, Specification } from '~/db/types';
 import { formatFilter } from '~/utils';
 
 const route = useRoute();
-const categoryId = Number(route.params.id);
+const idOrSlug = route.params.id as string;
 
 const specFilter = ref<Record<string, string[]>>({});
 const { data: category } = useAsyncData(
-  'category-' + categoryId,
+  'category-' + idOrSlug,
   async function () {
-    const { data: category } = await $fetch<ApiResponse<Category>>('/api/category/' + categoryId);
+    const { data: category } = await $fetch<ApiResponse<Category>>('/api/category/' + idOrSlug);
     if (!category) { return {} }
     for (const spec of category.specifications) {
       specFilter.value[spec.id] = [];
@@ -24,10 +24,10 @@ const { data: category } = useAsyncData(
   },
 );
 const { data: products, pending, refresh } = useAsyncData(
-  `cate-${categoryId}-products`,
+  `cate-${idOrSlug}-products`,
   async function () {
     const params = new URLSearchParams();
-    params.set('category', categoryId.toString());
+    params.set('category', idOrSlug);
     params.set('filter', formatFilter(specFilter.value));
     const { data: products } = await $fetch<ApiResponse<Product[]>>('/api/products?' + params.toString());
     return products;
@@ -39,9 +39,9 @@ const { data: products, pending, refresh } = useAsyncData(
   },
 );
 const { data: specifications } = useAsyncData(
-  `cate-${categoryId}-specifications`,
+  `cate-${idOrSlug}-specifications`,
   async function () {
-    const { data: specifications } = await $fetch<ApiResponse<ProductSpec[]>>('/api/product-spec?category=' + categoryId);
+    const { data: specifications } = await $fetch<ApiResponse<ProductSpec[]>>('/api/product-spec?category=' + idOrSlug);
     return (specifications || []).reduce((acc: Record<string, string[]>, spec: ProductSpec) => {
       if (!acc[spec.id]) {
         acc[spec.id] = [];

@@ -12,6 +12,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      spacing: {
+        15: '3.75rem',
+        21: '5.25rem',
+        '22-5': '5.625rem',
+        120: '30rem',
+      },
     },
   },
   plugins: [

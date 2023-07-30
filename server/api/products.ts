@@ -24,7 +24,6 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
   let query = db.selectFrom(TABLE_PRODUCT)
     .where('deletedAt', 'is', null);
   if (specFilter) {
-    console.log('xxx', specFilter);
     const productIds: number[] = [];
     for (const cateId in specFilter) {
       const results = await db.selectFrom(TABLE_PRODUCT_SPEC)

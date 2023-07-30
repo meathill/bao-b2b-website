@@ -50,7 +50,7 @@ main.flex.container.mx-auto.pt-4.gap-4
         v-for="item in categories"
         :key="item.id"
       )
-        nuxt-link(:to="'/category/' + item.id") {{item.name}}
+        nuxt-link(:to="'/category/' + (item.slug || item.id)") {{item.name}}
     nuxt-link.block.px-4.py-1.flex.justify-between.bg-base-200.border-t.mt-auto(
       to="/categories"
     ) View all
@@ -77,7 +77,7 @@ main.flex.container.mx-auto.pt-4.gap-4
         v-for="item in products"
         class="hover:bg-base-200"
         :key="item.id"
-        :to="'/product/' + item.id"
+        :to="'/product/' + (item.slug || item.id)"
       )
         img.block.w-24(
           v-if="item.images?.length"
@@ -97,6 +97,6 @@ main.flex.container.mx-auto.pt-4.gap-4
 
 <script lang="ts">
 export default {
-  name: 'Index',
+  name: 'Homepage',
 };
 </script>
