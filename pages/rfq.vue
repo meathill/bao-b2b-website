@@ -6,7 +6,7 @@ import { createClientInfo } from '~/utils';
 const quotationStore = useQuotationStore();
 
 const isSending = ref<boolean>(false);
-const clientInfo = ref<ClientInfo>(createClientInfo());
+const clientInfo = ref<ClientInfo>(quotationStore.clientInfo || createClientInfo());
 const comment = ref<string>('');
 const status = ref<boolean>(false);
 const message = ref<string>('');
@@ -16,13 +16,16 @@ async function doSubmit(event: Event): Promise<void> {
   if (isSending.value) { return }
 
   isSending.value = true;
+  message.value = '';
+  status.value = false;
+  quotationStore.saveClientInfo(clientInfo.value);
   try {
     await $fetch('/api/request', {
       method: 'POST',
       body: {
         products: quotationStore.quotations,
-        ...clientInfo,
-        comment,
+        ...clientInfo.value,
+        comment: comment.value,
       },
     });
     status.value = true;
@@ -112,7 +115,7 @@ main.rfq.container.mx-auto.py-4
         placeholder="Please include part number and quantity or special requests if any."
         v-model="comment"
       )
-    .alert(
+    .alert.col-span-2(
       v-if="message"
       :class="status ? 'alert-success' : 'alert-error'"
     ) {{message}}

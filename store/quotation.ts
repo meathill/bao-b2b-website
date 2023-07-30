@@ -1,18 +1,24 @@
-import { Quotation, QuotationItem } from '~/db/types';
+import { ClientInfo, QuotationItem } from '~/db/types';
 
 const LOCAL_STORAGE_KEY = 'quotation';
+const LOCAL_CLIENT_INFO_KEY = 'clientInfo';
 
 export const useQuotationStore = defineStore('quotation', () => {
   const quotations = ref<Record<string, QuotationItem>>({});
+  const clientInfo = ref<ClientInfo>();
 
   const quotationNumber = computed<number>(() => {
     return Object.keys(quotations.value).length;
   });
 
   function init(): void {
-    const local = localStorage.getItem(LOCAL_STORAGE_KEY);
+    let local = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (local) {
       quotations.value = JSON.parse(local);
+    }
+    local = localStorage.getItem(LOCAL_CLIENT_INFO_KEY);
+    if (local) {
+      clientInfo.value = JSON.parse(local);
     }
   }
   function save(): void {
@@ -26,13 +32,19 @@ export const useQuotationStore = defineStore('quotation', () => {
     delete quotations.value[id];
     save();
   }
+  function saveClientInfo(info: ClientInfo): void {
+    clientInfo.value = info;
+    localStorage.setItem(LOCAL_CLIENT_INFO_KEY, JSON.stringify(info));
+  }
 
   return {
     quotations,
     quotationNumber,
+    clientInfo,
 
     init,
     addQuotation,
     removeQuotation,
+    saveClientInfo,
   };
 });
