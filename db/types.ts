@@ -51,6 +51,7 @@ export interface CategoryTable extends BasicRecord {
   parent: number;
   description: string;
   image: string;
+  file: string;
   isHomepage: boolean;
 }
 export type Category = Selectable<CategoryTable> & {
@@ -75,6 +76,8 @@ interface ProductTable extends BasicRecord {
   description: string;
   digest: string;
   images: string[];
+  model: string;
+  file: string;
   category: number;
   more: ProductSpecification[];
   specifications: ProductSpec[];

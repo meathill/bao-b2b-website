@@ -21,6 +21,7 @@ export async function createCategory(): Promise<void> {
     .addColumn('description', 'varchar(255)')
     .addColumn('image', 'varchar(255)')
     .addColumn('isHomepage', 'boolean')
+    .addColumn('file', 'varchar(255)')
     .addColumn(
       'createdAt',
       sql('timestamp with time zone'),
@@ -50,6 +51,8 @@ export async function createProduct(): Promise<void> {
     .addColumn('digest', 'text')
     .addColumn('specification', 'json')
     .addColumn('images', 'varchar[]')
+    .addColumn('file', 'varchar(255)')
+    .addColumn('model', 'varchar(255)')
     .addColumn(
       'category',
       'integer',

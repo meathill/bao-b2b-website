@@ -159,12 +159,22 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         v-model="category.description"
       )
     .form-control.mb-4
+      label.label
+        span.label-text PDF
+      file-uploader(
+        name="categoryPdf"
+        accept="application/pdf"
+        label="Upload PDF"
+        v-model="category.file"
+      )
+    .form-control.mb-4
       label.label.cursor-pointer.justify-start.gap-4
         span.label-text Show on Homepage
         input.toggle(
           type="checkbox"
           v-model="category.isHomepage"
         )
+        span.label-text {{category.isHomepage ? 'Yes' : 'No'}}
   .flex-1
     specification-editor.mb-4(
       v-for="(item, index) in specifications"

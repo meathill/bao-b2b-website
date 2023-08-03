@@ -51,7 +51,7 @@ main.container.mx-auto.py-4
             :alt="product.name"
           )
       .flex.w-full.pt-2.gap-2
-        img.w-22-5.h-16.block.object-cover.rounded-box(
+        img.w-17-6.h-13-2.block.object-cover.rounded-box(
           v-for="(item, index) in product.images"
           :class="{'outline outline-primary': currentImage === index}"
           :key="item"
