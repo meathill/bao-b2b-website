@@ -134,7 +134,14 @@ onMounted(() => {
 header.flex.items-center.pb-4.mb-4.border-b
   h1.text-2xl.font-bold {{isNew ? 'Create' : 'Edit'}} Product
   span.loading.loading-spinner.ml-2(v-if="pending")
-  button.btn.btn-primary.ml-auto(
+  .ml-auto
+  nuxt-link.btn.btn-success(
+    v-if="!isNew"
+    :to="'/product/' + (product.slug || product.id)"
+  )
+    i.bi.bi-eye
+    | Product page
+  button.btn.btn-primary.ml-2(
     form="editor"
     :disabled="isSaving"
   )
@@ -173,18 +180,29 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         v-model="product.slug"
       )
     .form-control.mb-4
+      label.label(for="product-model")
+        span.label-text Model
+      input#product-model.input.input-bordered(
+        required
+        name="product-model"
+        placeholder="Product model"
+        v-model="product.model"
+      )
+    .form-control.mb-4
       label.label(for="product-digest")
         span.label-text Digest
-      textarea#product-digest.textarea.textarea-bordered.h-12(
+      textarea#product-digest.textarea.textarea-bordered.h-16(
         name="productDigest"
         placeholder="Product digest"
-        rows="2"
+        rows="3"
         v-model="product.digest"
       )
+      label.label(for="product-digest")
+        span.label-text-alt Used for SEO, and product list
     .form-control.mb-4
       label.label(for="product-description")
         span.label-text Description
-      textarea#product-description.textarea.textarea-bordered.h-24(
+      textarea#product-description.textarea.textarea-bordered.h-36(
         name="productDescription"
         placeholder="Product description"
         rows="3"
@@ -214,6 +232,15 @@ form#editor.flex.gap-4.mx-auto(@submit.prevent="doSave")
         span.label-text Images
       file-uploader(
         v-model="product.images"
+      )
+    .form-control.mb-4
+      label.label
+        span.label-text PDF
+      file-uploader(
+        name="product-pdf"
+        accept="application/pdf"
+        label="Upload PDF"
+        v-model="product.file"
       )
 
   .flex-1

@@ -39,6 +39,8 @@ export function createProduct(): NewProduct {
     category: -1,
     more: [],
     specifications: [],
+    model: '',
+    file: '',
   };
 }
 

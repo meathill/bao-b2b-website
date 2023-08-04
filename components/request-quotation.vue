@@ -27,11 +27,18 @@ function doSave(): void {
 </script>
 
 <template lang="pug">
-label.btn.btn-primary.ml-12.cursor-pointer(
-  for="request-quotation"
-)
-  i.bi.bi-clipboard2-plus
-  | Request quotation
+.flex.gap-2
+  input.input.input-bordered.w-20.always-spin(
+    type="number"
+    min="1"
+    v-model="quotation.quantity"
+  )
+
+  label.btn.btn-primary.cursor-pointer(
+    for="request-quotation"
+  )
+    i.bi.bi-clipboard2-plus
+    | Request quotation
 
 teleport(to="body")
   .drawer.drawer-end
@@ -46,7 +53,7 @@ teleport(to="body")
           )
             i.bi.bi-x-lg
 
-        form(
+        form#sidebar-quotation-form(
           @submit.prevent="doSave"
         )
           .form-control.mb-2

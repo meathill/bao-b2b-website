@@ -10,3 +10,10 @@ html, body, #__nuxt {
   display: flex;
   flex-direction: column;
 }
+
+.always-spin {
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    opacity: 1;
+  }
+}

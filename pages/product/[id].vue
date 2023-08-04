@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { marked } from 'marked';
 import type { ApiResponse } from '~/types';
-import type { Product } from '~/db/types';
+import type { Category, Product } from '~/db/types';
+import { useProductStore } from '~/store';
 
 const route = useRoute();
 const idOrSlug = route.params.id;
 const Tabs = ['Description', 'Specification'];
+const productStore = useProductStore();
 
 const { data: product } = useAsyncData<ApiResponse<Product>>(
   'product-' + idOrSlug,
@@ -22,6 +24,10 @@ const { data: product } = useAsyncData<ApiResponse<Product>>(
 
 const currentImage = ref<number>(0);
 const currentTab = ref<number>(0);
+const category = computed<Category>(() => {
+  return (product.value && productStore.categories[product.value.category])
+    || {};
+});
 
 function doSwitchTab(tab: number): void {
   currentTab.value = tab;
@@ -59,14 +65,20 @@ main.container.mx-auto.py-4
           :alt="product.name"
           @click="currentImage = index"
         )
-    .flex-1
-      dl.grid.grid-cols-6.gap-2.mb-4
+    .flex-1.flex.flex-col
+      dl.grid.grid-cols-6.gap-2.mb-4.border.border-r-0
         template(
           v-for="item in product.specifications"
           :key="item.specId"
         )
-          dt.text-right(class="text-neutral/75") {{item.name}}:
-          dd.font-semibold {{item.value}}
+          dt.text-right.py-2(class="text-neutral/75") {{item.name}}:
+          dd.font-semibold.border-r.py-2 {{item.value}}
+
+      .mb-auto(v-if="product.file || category.file")
+        nuxt-link.btn.btn-outline.btn-sm(
+          :to="product.file || category.file"
+          target="_blank"
+        ) Download manual
 
       request-quotation(
         :product="product"
@@ -85,7 +97,7 @@ main.container.mx-auto.py-4
       class="lg:prose-lg",
     )
       article(
-        v-html="marked.parse(product.description)"
+        v-html="marked.parse(product.description || '')"
       )
   .tab-content.pt-4(v-else-if="currentTab === 1")
     table.table.border.max-w-4xl.mx-auto
