@@ -12,7 +12,11 @@ const productStore = useProductStore();
 const { data: product } = useAsyncData<ApiResponse<Product>>(
   'product-' + idOrSlug,
   async function () {
-    const { data } = await $fetch<ApiResponse<Product>>('/api/product/' + idOrSlug);
+    const { data } = await $fetch<ApiResponse<Product>>('/api/product/' + idOrSlug, {
+      params: {
+        related: 1,
+      },
+    });
     return data;
   },
   {
@@ -25,8 +29,8 @@ const { data: product } = useAsyncData<ApiResponse<Product>>(
 const currentImage = ref<number>(0);
 const currentTab = ref<number>(0);
 const category = computed<Category>(() => {
-  return (product.value && productStore.categories[product.value.category])
-    || {};
+  return (product.value && productStore.categories[product.value.category]) ||
+    {};
 });
 
 function doSwitchTab(tab: number): void {
@@ -84,14 +88,13 @@ main.container.mx-auto.py-4
         :product="product"
       )
 
-  .tabs
-    .tab.tab-lifted.tab-lg.cursor-pointer.static(
+  .tabs.gap-4
+    .tab.tab-bordered.tab-lg.cursor-pointer.static(
       v-for="(item, index) in Tabs"
       :key="index"
-      :class="{'tab-active': currentTab === index}"
+      :class="{'tab-active': currentTab === index, 'border-transparent': currentTab !== index}"
       @click="doSwitchTab(index)"
     ) {{item}}
-    .border-b.flex-1
   .tab-content(v-if="currentTab === 0")
     .prose.mx-auto(
       class="lg:prose-lg",
@@ -112,4 +115,22 @@ main.container.mx-auto.py-4
         )
           td.border-r {{item.name}}
           td {{item.value}}
+
+  header.flex.justify-start(
+    v-if="product.related?.length"
+  )
+    h3.text-lg.font-medium.mt-4.px-5.border-b-2.border-neutral.pb-2 Related Products
+
+  .flex.gap-4(v-if="product.related?.length")
+    nuxt-link.border.p-4(
+      v-for="item in product.related"
+      :key="item.id"
+      :to="'/product/' + item.slug"
+    )
+      img.block.w-full.object-fit(
+        v-if="item.images.length"
+        :src="item.images[0]"
+        :alt="item.name"
+      )
+      h4.font-bold.mt-2 {{item.name}}
 </template>

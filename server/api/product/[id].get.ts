@@ -12,6 +12,11 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
     });
   }
 
+  const query = getQuery(event);
+  const {
+    related = false,
+  } = query;
+
   const product = await db
     .selectFrom(TABLE_PRODUCT)
     .selectAll()
@@ -32,6 +37,19 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
     .selectAll(TABLE_PRODUCT_SPEC)
     .select(TABLE_SPEC + '.name')
     .execute();
+
+  if (related) {
+    const relatedProducts = await db
+      .selectFrom(TABLE_PRODUCT)
+      .select(['id', 'name', 'slug', 'images'])
+      .where('category', '=', product.category)
+      .where('id', '!=', product.id)
+      .where('deletedAt', 'is', null)
+      .orderBy('id', 'desc')
+      .limit(15)
+      .execute();
+    product.related = relatedProducts.sort(() => Math.random() - 0.5).slice(0, 5);
+  }
 
   return {
     code: 0,
