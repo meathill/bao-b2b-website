@@ -7,8 +7,7 @@ import { db } from '~/db/kysely';
  * Find category's all ancestor
  */
 export default defineEventHandler(async function (event: H3Event): Promise<ApiResponse<Partial<Category>[]>> {
-  const body = (await readBody(event)) as IdRequest;
-  const { id } = body;
+  const { id } = getQuery(event) as IdRequest;
   const result = [];
   let category: Category | null = (await db.selectFrom(TABLE_CATEGORY)
     .select(['id', 'name', 'parent'])
@@ -30,6 +29,8 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
       category = null;
     }
   }
+
+  setHeader(event, 'Cache-Control', 'public, max-age=86400');
   return {
     code: 0,
     data: result,

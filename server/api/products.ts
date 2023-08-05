@@ -46,7 +46,17 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
     .select(count('id').as('total'))
     .execute();
   const results = await query
-    .select(['id', 'name', 'slug', 'description', 'images', 'category', 'createdAt', 'updatedAt'])
+    .select([
+      'id',
+      'name',
+      'slug',
+      'description',
+      'images',
+      'category',
+      'createdAt',
+      'updatedAt',
+      'digest',
+    ])
     .orderBy('id', 'desc')
     .limit(size)
     .execute();

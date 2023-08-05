@@ -8,14 +8,13 @@ type Props = {
 };
 const props = defineProps<Props>();
 
-const { data } = useAsyncData(
+const { data, refresh } = useAsyncData(
   async function () {
     if (!props.category) {
       return [];
     }
-    const { data } = await $fetch<ApiResponse<Partial<Category[]>>>('/api/category/find-path', {
-      method: 'POST',
-      body: {
+    const { data } = await $fetch<ApiResponse<Partial<Category[]>>>('/api/category-path', {
+      params: {
         id: props.category,
       },
     });
@@ -43,9 +42,9 @@ const { data } = useAsyncData(
       :key="item.id"
     )
       nuxt-link(
-        :to="'/category/' + item.id"
+        :to="'/category/' + (item.slug || item.id)"
       ) {{item.name}}
-    li(v-if="props.title") {{props.title}}
+    li(v-if="title") {{title}}
 </template>
 
 <script lang="ts">

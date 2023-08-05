@@ -2,6 +2,7 @@
 import type { ApiResponse } from '~/types';
 import type { Category, Product, ProductSpec, Specification } from '~/db/types';
 import { formatFilter } from '~/utils';
+import { useQuotationStore } from '~/store';
 
 const route = useRoute();
 const idOrSlug = route.params.id as string;
@@ -15,6 +16,10 @@ const { data: category } = useAsyncData(
     for (const spec of category.specifications) {
       specFilter.value[spec.id] = [];
     }
+    await Promise.all([
+      refreshSpecifications(),
+      refresh(),
+    ]);
     return category;
   },
   {
@@ -26,11 +31,16 @@ const { data: category } = useAsyncData(
 const { data: products, pending, refresh } = useAsyncData(
   `cate-${idOrSlug}-products`,
   async function () {
-    const params = new URLSearchParams();
-    params.set('category', idOrSlug);
-    params.set('filter', formatFilter(specFilter.value));
-    const { data: products } = await $fetch<ApiResponse<Product[]>>('/api/products?' + params.toString());
-    return products;
+    if (isNaN(Number(idOrSlug)) && !category.value) {
+      return [];
+    }
+    const { data: products } = await $fetch<ApiResponse<Product[]>>('/api/products', {
+      params: {
+        category: category.value.id,
+        filter: formatFilter(specFilter.value),
+      },
+    });
+    return (products || []).map(product => ({ ...product, quantity: 1 }));
   },
   {
     default() {
@@ -38,10 +48,17 @@ const { data: products, pending, refresh } = useAsyncData(
     },
   },
 );
-const { data: specifications } = useAsyncData(
+const { data: specifications, refresh: refreshSpecifications } = useAsyncData(
   `cate-${idOrSlug}-specifications`,
   async function () {
-    const { data: specifications } = await $fetch<ApiResponse<ProductSpec[]>>('/api/product-spec?category=' + idOrSlug);
+    if (isNaN(Number(idOrSlug)) && !category.value) {
+      return [];
+    }
+    const { data: specifications } = await $fetch<ApiResponse<ProductSpec[]>>('/api/product-spec', {
+      params: {
+        category: category.value.id,
+      },
+    });
     return (specifications || []).reduce((acc: Record<string, string[]>, spec: ProductSpec) => {
       if (!acc[spec.id]) {
         acc[spec.id] = [];
@@ -66,6 +83,16 @@ const theSpecifications = computed<Record<string, Specification>>(() => {
   }, {} as Record<string, any>);
 });
 
+function doRequest(product: Product): void {
+  const quotationStore = useQuotationStore();
+  quotationStore.addQuotation({
+    productId: product.id,
+    productName: product.name,
+    quantity: product.quantity || 1,
+    price: 100,
+    comment: '',
+  });
+}
 function onToggleSpec(cateId: number, option: string): Promise<void> {
   const spec = specFilter.value[cateId];
   if (!spec || !Array.isArray(spec)) {
@@ -82,7 +109,7 @@ function onToggleSpec(cateId: number, option: string): Promise<void> {
 <template lang="pug">
 main.container.mx-auto.py-4
   breadcrumbs(
-    :categpry="category.parent"
+    :category="Number(category.parent)"
     :title="category.name"
   )
   h1.text-2xl.font-bold.mb-4 {{category.name}}
@@ -112,18 +139,30 @@ main.container.mx-auto.py-4
       )
         .product-thumbnail.w-80
           nuxt-link(
-            :to="'/product/' + item.id"
+            :to="'/product/' + (item.slug || item.id)"
           )
             img(
+              v-if="item.images?.length"
               :src="item.images[0]"
               :alt="item.name"
             )
-        .flex-1
+        .flex-1.flex.flex-col
           h2.text-xl.font-semibold.mb-4
-            nuxt-link(
-              :to="'/product/' + item.id"
+            nuxt-link.link(
+              class="hover:no-underline"
+              :to="'/product/' + (item.slug || item.id)"
             ) {{item.name}}
           p {{item.digest}}
+          footer.mt-auto.flex.justify-end
+            input.input.input-bordered.input-sm.w-16.always-spin.pr-0(
+              type="number"
+              min="1"
+              v-model="item.quantity"
+            )
+            button.btn.btn-primary.btn-sm.ml-4(
+              type="button"
+              @click="doRequest"
+            ) Request quotation
       .absolute.top-0.left-0.right-0.bottom-0.bg-white.opacity-75.z-10.flex.justify-center.items-center(
         v-if="pending"
       )
