@@ -5,43 +5,72 @@ import { createQuotationItem } from '~/utils';
 
 type Props = {
   product: Product;
+  hideInquiry?: boolean;
 };
 const props = defineProps<Props>();
+type Emits = {
+  (e: 'add'): void;
+};
+const emit = defineEmits<Emits>();
 
 const quotationStore = useQuotationStore();
 
 const quotation = ref<QuotationItem>(createQuotationItem());
 const message = ref<string>('');
+const isSaved = ref<boolean>(false);
 
-function doSave(): void {
+function addQuotation(): void {
   const item = {
     ...quotation.value,
     productId: props.product.id,
     productName: props.product.name,
-    price: quotation.value.price * 100,
   };
-  quotationStore.addQuotation(quotation.value);
+  quotationStore.addQuotation(item);
+}
+async function doAdd(event: Event): Promise<void> {
+  if ((event.target as HTMLFormElement).matches(':invalid')) { return }
+  addQuotation();
+  isSaved.value = true;
+  await sleep(1500);
+  isSaved.value = false;
+}
+function doSave(event: Event): void {
+  if ((event.target as HTMLFormElement).matches(':invalid')) { return }
+
+  addQuotation();
   message.value = 'Saved.';
   quotation.value = createQuotationItem();
 }
 </script>
 
 <template lang="pug">
-.flex.gap-2
+form.flex.gap-2(
+  @submit.prevent="doAdd"
+)
   input.input.input-bordered.w-20.always-spin(
     type="number"
     min="1"
+    step="1"
+    pattern="^\d+$"
+    required
     v-model="quotation.quantity"
   )
+  button.btn(
+    :class="isSaved ? 'btn-success' : 'btn-primary'"
+  )
+    i.bi.bi-check-lg(v-if="isSaved")
+    i.bi.bi-list(v-else)
+    | {{isSaved ? 'Added' : 'Add to inquiry list'}}
 
-  label.btn.btn-primary.cursor-pointer(
+  label.btn.btn-error.cursor-pointer(
+    v-if="!hideInquiry"
     for="request-quotation"
   )
     i.bi.bi-clipboard2-plus
-    | Request quotation
+    | Inquiry
 
 teleport(to="body")
-  .drawer.drawer-end
+  .drawer.drawer-end(v-if="!hideInquiry")
     input#request-quotation.drawer-toggle(type="checkbox")
     .drawer-side
       label.drawer-overlay(for="request-quotation")
@@ -64,7 +93,7 @@ teleport(to="body")
               placeholder="Your name"
               :value="product.name"
             )
-          .form-control.mb-2
+          .form-control.mb-2.hidden
             label.label(for="quotation-product-price")
               span.label-text Product price
             .join

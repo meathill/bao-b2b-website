@@ -3,9 +3,9 @@ import { useQuotationStore } from '~/store';
 
 const quotationStore = useQuotationStore();
 const route = useRoute();
-const isAdmin = route.path.startsWith('/admin');
 
 const search = ref<string>('');
+const isAdmin = computed<boolean>(() => route.path.startsWith('/admin'));
 
 function doSearch(): void {
   const router = useRouter();

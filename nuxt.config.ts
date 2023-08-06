@@ -48,8 +48,11 @@ export default defineNuxtConfig({
     '/about': { prerender: true },
     '/contact': { prerender: true },
     // pages generated on-demand, revalidates in background
-    '/product/**': { swr: true },
-    '/category/**': { swr: true },
+    ...process.env.NODE_ENV === 'production' && {
+      '/product/**': { swr: true },
+      '/category/**': { swr: true },
+    },
+    '/rfq': { ssr: false },
     // Admin dashboard renders only on client-side
     '/admin/**': { ssr: false },
     // Add cors headers on API routes

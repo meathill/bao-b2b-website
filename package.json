@@ -15,7 +15,7 @@
     "@tailwindcss/typography": "^0.5.9",
     "@types/lodash": "^4.14.196",
     "@types/marked": "^5.0.1",
-    "@types/node": "^20.4.7",
+    "@types/node": "^20.4.8",
     "autoprefixer": "^10.4.14",
     "daisyui": "^3.5.1",
     "eslint": "^8.46.0",
@@ -26,8 +26,8 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.383.0",
-    "@aws-sdk/s3-request-presigner": "^3.383.0",
+    "@aws-sdk/client-s3": "^3.385.0",
+    "@aws-sdk/s3-request-presigner": "^3.385.0",
     "@nuxt/content": "^2.7.2",
     "@vercel/edge-config": "^0.2.1",
     "@vercel/postgres": "^0.4.1",

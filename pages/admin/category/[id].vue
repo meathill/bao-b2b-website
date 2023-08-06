@@ -97,10 +97,17 @@ function doAddSpecification(): void {
 </script>
 
 <template lang="pug">
-header.flex.items-center.pb-4.mb-4.border-b
+header.flex.items-center.pb-4.mb-4.border-b.gap-2
   h1.text-2xl.font-bold {{isNew ? 'Create' : 'Edit'}} Category
   span.loading.loading-spinner.ml-2(v-if="pending")
-  button.btn.btn-primary.ml-auto(
+  .ml-auto
+  nuxt-link.btn.btn-success(
+    v-if="!isNew"
+    :to="'/category/' + (category.slug || category.id)"
+  )
+    i.bi.bi-eye
+    | Category page
+  button.btn.btn-primary(
     form="editor"
     :disabled="isSaving"
   )

@@ -44,14 +44,14 @@ main.rfq.container.mx-auto.py-4
     thead
       tr
         th Name
-        th Price
+        th.hidden Price
         th Quantity
         th Comment
         th
     tbody
       tr(v-for="(item, pId) in quotationStore.quotations")
         td {{item.productName}}
-        td ${{item.price / 100}}
+        td.hidden ${{item.price / 100}}
         td {{item.quantity}}
         td {{item.comment}}
         td

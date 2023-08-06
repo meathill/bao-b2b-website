@@ -71,23 +71,31 @@ async function doSave(event: Event): Promise<void> {
   if (isSaving.value || isLoadingSpec.value) { return }
 
   isSaving.value = true;
+  message.value = '';
   const url = isNew ? '/api/product' : '/api/product/' + route.params.id;
   const method = isNew ? 'POST' : 'PUT';
-  const { data } = await $fetch<ApiResponse<number>>(url, {
-    method,
-    body: {
-      ...product.value,
-      specifications: requiredSpecs.value.map((spec: Specification) => {
-        return {
-          specId: spec.id,
-          value: spec.value,
-        };
-      }),
-    },
-  });
-  if (isNew) {
-    const router = useRouter();
-    await router.replace('/admin/product/' + data);
+  try {
+    const { data } = await $fetch<ApiResponse<number>>(url, {
+      method,
+      body: {
+        ...product.value,
+        specifications: requiredSpecs.value.map((spec: Specification) => {
+          return {
+            specId: spec.id,
+            value: spec.value,
+          };
+        }),
+      },
+    });
+    status.value = true;
+    message.value = 'Product saved.';
+    if (isNew) {
+      const router = useRouter();
+      await router.replace('/admin/product/' + data);
+    }
+  } catch (e) {
+    status.value = false;
+    message.value = (e as Error).message || String(e);
   }
   isSaving.value = false;
 }

@@ -3,6 +3,7 @@ import { Product, TABLE_PRODUCT, TABLE_PRODUCT_SPEC } from '~/db/types';
 import { db } from '~/db/kysely';
 import { ApiResponse } from '~/types';
 import { filterToObject } from '~/utils';
+import { getCategoryByIdOrSlug } from '~/utils/api';
 
 const { count } = db.fn;
 
@@ -36,7 +37,12 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
     query = query.where('id', 'in', productIds);
   }
   if (category) {
-    query = query.where('category', '=', Number(category));
+    let categoryId = Number(category);
+    if (isNaN(categoryId)) {
+      const cate = await getCategoryByIdOrSlug(category as string);
+      categoryId = cate.id;
+    }
+    query = query.where('category', '=', categoryId);
   }
   if (search) {
     query = query.where('name', 'like', `%${search}%`);

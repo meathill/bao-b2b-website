@@ -31,12 +31,9 @@ const { data: category } = useAsyncData(
 const { data: products, pending, refresh } = useAsyncData(
   `cate-${idOrSlug}-products`,
   async function () {
-    if (isNaN(Number(idOrSlug)) && !category.value) {
-      return [];
-    }
     const { data: products } = await $fetch<ApiResponse<Product[]>>('/api/products', {
       params: {
-        category: category.value.id,
+        category: idOrSlug,
         filter: formatFilter(specFilter.value),
       },
     });
@@ -51,12 +48,9 @@ const { data: products, pending, refresh } = useAsyncData(
 const { data: specifications, refresh: refreshSpecifications } = useAsyncData(
   `cate-${idOrSlug}-specifications`,
   async function () {
-    if (isNaN(Number(idOrSlug)) && !category.value) {
-      return [];
-    }
     const { data: specifications } = await $fetch<ApiResponse<ProductSpec[]>>('/api/product-spec', {
       params: {
-        category: category.value.id,
+        category: idOrSlug,
       },
     });
     return (specifications || []).reduce((acc: Record<string, string[]>, spec: ProductSpec) => {
@@ -83,7 +77,7 @@ const theSpecifications = computed<Record<string, Specification>>(() => {
   }, {} as Record<string, any>);
 });
 
-function doRequest(product: Product): void {
+function doRequestQuotation(product: Product): void {
   const quotationStore = useQuotationStore();
   quotationStore.addQuotation({
     productId: product.id,
@@ -154,15 +148,10 @@ main.container.mx-auto.py-4
             ) {{item.name}}
           p {{item.digest}}
           footer.mt-auto.flex.justify-end
-            input.input.input-bordered.input-sm.w-16.always-spin.pr-0(
-              type="number"
-              min="1"
-              v-model="item.quantity"
+            request-quotation(
+              :product="item"
+              hide-inquiry
             )
-            button.btn.btn-primary.btn-sm.ml-4(
-              type="button"
-              @click="doRequest"
-            ) Request quotation
       .absolute.top-0.left-0.right-0.bottom-0.bg-white.opacity-75.z-10.flex.justify-center.items-center(
         v-if="pending"
       )

@@ -8,6 +8,9 @@ const route = useRoute();
 const idOrSlug = route.params.id;
 const Tabs = ['Description', 'Specification'];
 const productStore = useProductStore();
+if (!productStore.isLoaded) {
+  productStore.refreshCategories();
+}
 
 const { data: product } = useAsyncData<ApiResponse<Product>>(
   'product-' + idOrSlug,
@@ -36,7 +39,7 @@ const category = computed<Category>(() => {
 function doSwitchTab(tab: number): void {
   currentTab.value = tab;
 }
-function addToCart(product: Product): void {
+function doAddToQuotation(product: Product): void {
 
 }
 </script>

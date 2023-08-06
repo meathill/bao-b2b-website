@@ -25,6 +25,13 @@ export const useQuotationStore = defineStore('quotation', () => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(quotations.value));
   }
   function addQuotation(quotation: QuotationItem): void {
+    const current = quotations.value[quotation.productId];
+    if (current) {
+      quotation = {
+        ...quotation,
+        quantity: quotation.quantity + current.quantity,
+      };
+    }
     quotations.value[quotation.productId] = quotation;
     save();
   }

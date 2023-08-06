@@ -1,7 +1,8 @@
 import { H3Event } from 'h3';
 import { ApiResponse } from '~/types';
 import { db } from '~/db/kysely';
-import { Category, TABLE_CATEGORY, TABLE_SPEC } from '~/db/types';
+import { Category, TABLE_SPEC } from '~/db/types';
+import { getCategoryByIdOrSlug } from '~/utils/api';
 
 export default defineEventHandler(async function (event: H3Event): Promise<ApiResponse<Category>> {
   const id = event.context.params?.id as string;
@@ -12,12 +13,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
     });
   }
 
-  const category = await db
-    .selectFrom(TABLE_CATEGORY)
-    .selectAll()
-    .where(isNaN(Number(id)) ? 'slug' : 'id', '=', id)
-    .where('deletedAt', 'is', null)
-    .executeTakeFirst();
+  const category = await getCategoryByIdOrSlug(id);
   if (!category) {
     throw createError({
       statusCode: 404,

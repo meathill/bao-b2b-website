@@ -101,3 +101,7 @@ export function filterToObject(str: string): null | Record<string, string[]> {
     return acc;
   }, {} as Record<string, string[]>);
 }
+
+export function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
