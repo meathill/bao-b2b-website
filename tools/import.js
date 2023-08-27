@@ -85,7 +85,7 @@ for (const topType in categories) {
         console.log('Fetch info:', info);
 
         // 读取产品信息
-        let data = await redis.get(info.model);
+        let data = await redis.get(productModel);
         let specifications = JSON.parse(data);
         if (Array.isArray(specifications)) {
           specifications = {};
@@ -111,7 +111,7 @@ for (const topType in categories) {
         for (const key in specifications) {
           const specGroup = specifications[key];
           for (const specKey in specGroup) {
-            const specValue = specGroup[key];
+            const specValue = specGroup[specKey];
             const storeKey = `spec_${subCategoryId}-${specKey}`;
             let specId = created.spec[storeKey];
             if (!specId) {
