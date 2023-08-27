@@ -82,7 +82,7 @@ function update(): void {
   )
     img.w-16(
       v-if="!types[index] && file && /\.(png|jpg|jpeg|gif)$/i.test(file)"
-      :src="file"
+      :src="useImageProxy(file)"
       alt="file"
     )
     nuxt-link.btn.btn-outline(

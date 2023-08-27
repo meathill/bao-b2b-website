@@ -12,7 +12,7 @@ if (!productStore.isLoaded) {
   productStore.refreshCategories();
 }
 
-const { data: product } = useAsyncData<ApiResponse<Product>>(
+const { data: product } = await useAsyncData<ApiResponse<Product>>(
   'product-' + idOrSlug,
   async function () {
     const { data } = await $fetch<ApiResponse<Product>>('/api/product/' + idOrSlug, {
@@ -34,6 +34,9 @@ const currentTab = ref<number>(0);
 const category = computed<Category>(() => {
   return (product.value && productStore.categories[product.value.category]) ||
     {};
+});
+const description = computed<string>(() => {
+  return marked.parse(useImageProxy(product.description) || '');
 });
 
 function doSwitchTab(tab: number): void {
@@ -60,7 +63,7 @@ main.container.mx-auto.py-4
           :id="'product-image-' + index"
         )
           img.w-full.h-full.block.object-cover.rounded-box(
-            :src="item"
+            :src="useImageProxy(item)"
             :alt="product.name"
           )
       .flex.w-full.pt-2.gap-2
@@ -68,18 +71,14 @@ main.container.mx-auto.py-4
           v-for="(item, index) in product.images"
           :class="{'outline outline-primary': currentImage === index}"
           :key="item"
-          :src="item"
+          :src="useImageProxy(item)"
           :alt="product.name"
           @click="currentImage = index"
         )
     .flex-1.flex.flex-col
-      dl.grid.grid-cols-6.gap-2.mb-4.border.border-r-0
-        template(
-          v-for="item in product.specifications"
-          :key="item.specId"
-        )
-          dt.text-right.py-2(class="text-neutral/75") {{item.name}}:
-          dd.font-semibold.border-r.py-2 {{item.value}}
+      p.mb-auto
+        i.bi.bi-dot
+        | Model: {{product.model}}
 
       .mb-auto(v-if="product.file || category.file")
         nuxt-link.btn.btn-outline.btn-sm(
@@ -103,14 +102,16 @@ main.container.mx-auto.py-4
       class="lg:prose-lg",
     )
       article(
-        v-html="marked.parse(product.description || '')"
+        v-html=""
       )
   .tab-content.pt-4(v-else-if="currentTab === 1")
-    table.table.border.max-w-4xl.mx-auto
+    table.table.border.max-w-4xl.mx-auto(
+      v-if="Array.isArray(product.more)"
+    )
       thead
         tr
-          th.border-r Parameter name
-          th Value
+          th.border-r.bg-base-200 Parameter name
+          th.bg-base-200 Value
       tbody
         tr.hover(
           v-for="(item, index) in product.more"
@@ -118,6 +119,23 @@ main.container.mx-auto.py-4
         )
           td.border-r {{item.name}}
           td {{item.value}}
+    table.table.border.max-w-4xl.mx-auto(
+      v-else
+    )
+      template(
+        v-for="(group, key) in product.more"
+        :key="key"
+      )
+        thead
+          tr
+            th.bg-base-200(colspan="2") {{key}}
+        tbody
+          tr.hover(
+            v-for="(value, key) in group"
+            :key="key"
+          )
+            td.border-r {{key}}
+            td {{value}}
 
   header.flex.justify-start(
     v-if="product.related?.length"
@@ -132,7 +150,7 @@ main.container.mx-auto.py-4
     )
       img.block.w-full.object-fit(
         v-if="item.images.length"
-        :src="item.images[0]"
+        :src="useImageProxy(item.images[0])"
         :alt="item.name"
       )
       h4.font-bold.mt-2 {{item.name}}

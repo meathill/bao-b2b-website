@@ -137,7 +137,7 @@ main.container.mx-auto.py-4
           )
             img(
               v-if="item.images?.length"
-              :src="item.images[0]"
+              :src="useImageProxy(item.images[0])"
               :alt="item.name"
             )
         .flex-1.flex.flex-col

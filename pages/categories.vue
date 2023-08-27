@@ -4,7 +4,7 @@ import { useProductStore } from '~/store';
 
 const productStore = useProductStore();
 
-const { data: categories } = useAsyncData<Category[]>(
+const { data: categories } = await useAsyncData<Category[]>(
   'categories',
   async function () {
     const categories = productStore.isLoaded

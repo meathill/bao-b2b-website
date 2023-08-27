@@ -37,7 +37,7 @@ const { data: product, pending } = useAsyncData(
     },
   },
 );
-const { data: categories } = useAsyncData<Record<string, Category>>(
+const { data: categories } = await useAsyncData<Record<string, Category>>(
   'categories',
   async function () {
     if (productStore.isLoaded) { return productStore.categories }

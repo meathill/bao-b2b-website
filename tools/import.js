@@ -95,7 +95,7 @@ for (const topType in categories) {
         // 读取图片信息。先不下载图片，蹭他们的试试
         data = await redis.get(info.model + '_pic');
         let images = JSON.parse(data);
-        images = images.filter((img) => img.includes('550x550'));
+        images = images.filter(img => img.includes('550x550'));
         console.log('Product images:', images);
 
         // 读取产品描述

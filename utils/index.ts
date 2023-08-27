@@ -105,3 +105,7 @@ export function filterToObject(str: string): null | Record<string, string[]> {
 export function sleep(ms: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
+
+export function useImageProxy(src: string): string {
+  return src.replaceAll('https://www.omc-stepperonline.com/', 'https://b2bp.muicv.com/');
+}

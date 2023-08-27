@@ -21,8 +21,8 @@ export default defineNuxtConfig({
     },
   },
   alias: {
-    "micromark/lib/preprocess.js": "micromark",
-    "micromark/lib/postprocess.js": "micromark",
+    'micromark/lib/preprocess.js': 'micromark',
+    'micromark/lib/postprocess.js': 'micromark',
   },
   css: [
     '~/assets/css/main.css',
@@ -53,8 +53,8 @@ export default defineNuxtConfig({
     '/contact': { prerender: true },
     // pages generated on-demand, revalidates in background
     ...process.env.NODE_ENV === 'production' && {
-      '/product/**': { swr: true },
-      '/category/**': { swr: true },
+      '/product/**': { isr: true },
+      '/category/**': { isr: true },
     },
     '/rfq': { ssr: false },
     // Admin dashboard renders only on client-side

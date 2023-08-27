@@ -9,7 +9,7 @@ type LocalRowItem = Category & RowItem;
 const productStore = useProductStore();
 const message = ref<string>('');
 
-const { data: categories, pending } = useAsyncData<Category[]>(
+const { data: categories, pending } = await useAsyncData<Category[]>(
   'categories',
   async function () {
     if (productStore.isLoaded) {

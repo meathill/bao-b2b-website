@@ -29,7 +29,7 @@ main.container.mx-auto.py-4
     )
       img.block.mb-2(
         v-if="item.images && item.images.length"
-        :src="item.images[0]"
+        :src="useImageProxy(item.images[0])"
         :alt="item.name"
       )
       h2.text-lg.font-semibold {{item.name}}

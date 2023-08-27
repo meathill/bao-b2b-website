@@ -10,7 +10,7 @@ const productStore = useProductStore();
 const page = ref<number>(0);
 const size = ref<number>(20);
 const message = ref<string>('');
-const { data: products, pending } = useAsyncData<Product[]>(
+const { data: products, pending } = await useAsyncData<Product[]>(
   'products',
   async function () {
     const { data } = await $fetch<ApiResponse<Product[]>>('/api/products', {
@@ -38,7 +38,7 @@ const { data: products, pending } = useAsyncData<Product[]>(
     },
   },
 );
-const { data: categories } = useAsyncData<Record<string, Category>>(
+const { data: categories } = await useAsyncData<Record<string, Category>>(
   'categories',
   async function () {
     if (productStore.isLoaded) { return productStore.categories }
@@ -104,7 +104,7 @@ table.table.table-zebra.border
         )
           img.w-12(
             v-if="/\.(jpg|png|webp)$/.test(image)"
-            :src="image"
+            :src="useImageProxy(image)"
           )
           nuxt-link(
             v-else
