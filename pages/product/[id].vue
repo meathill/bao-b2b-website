@@ -36,7 +36,7 @@ const category = computed<Category>(() => {
     {};
 });
 const description = computed<string>(() => {
-  return marked.parse(useImageProxy(product.description) || '');
+  return product.description ? marked.parse(useImageProxy(product.description)) : '';
 });
 
 function doSwitchTab(tab: number): void {
@@ -102,7 +102,7 @@ main.container.mx-auto.py-4
       class="lg:prose-lg",
     )
       article(
-        v-html=""
+        v-html="description"
       )
   .tab-content.pt-4(v-else-if="currentTab === 1")
     table.table.border.max-w-4xl.mx-auto(
