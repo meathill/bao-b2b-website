@@ -30,8 +30,8 @@ dependencies:
     specifier: ^4.17.21
     version: 4.17.21
   marked:
-    specifier: ^7.0.4
-    version: 7.0.4
+    specifier: ^7.0.5
+    version: 7.0.5
   pinia:
     specifier: ^2.1.6
     version: 2.1.6(typescript@5.2.2)(vue@3.3.4)
@@ -43,9 +43,6 @@ devDependencies:
   '@inkdropapp/html2markdown':
     specifier: ^3.2.1
     version: 3.2.1
-  '@notable/html2markdown':
-    specifier: ^2.0.3
-    version: 2.0.3
   '@nuxt/devtools':
     specifier: latest
     version: 0.8.0(nuxt@3.7.0)(vite@4.4.9)
@@ -1791,12 +1788,6 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
-
-  /@notable/html2markdown@2.0.3:
-    resolution: {integrity: sha512-ah3y5vNXKURWRxURrnyCNMwdZCABp0hPwtSOfZBldldl5Qwre9OVV5aT2kTg2t0d0fQCRXxefA6o0w48A7nb2A==}
-    dependencies:
-      mime2ext: 2.0.0
-    dev: true
 
   /@npmcli/fs@3.1.0:
     resolution: {integrity: sha512-7kZUAaLscfgbwBQRbvdMYaZOWyMEcPTH/tJjnyAWJ/dvvs9Ef+CERx/qJb9GExJpl1qipaDGn7KqHnFGGixd0w==}
@@ -6901,8 +6892,8 @@ packages:
   /markdown-table@3.0.3:
     resolution: {integrity: sha512-Z1NL3Tb1M9wH4XESsCDEksWoKTdlUafKc4pt0GRwjUyXaCFZ+dc3g2erqB6zm3szA2IUSi7VnPI+o/9jnxh9hw==}
 
-  /marked@7.0.4:
-    resolution: {integrity: sha512-t8eP0dXRJMtMvBojtkcsA7n48BkauktUKzfkPSCq85ZMTJ0v76Rke4DYz01omYpPTUh4p/f7HePgRo3ebG8+QQ==}
+  /marked@7.0.5:
+    resolution: {integrity: sha512-lwNAFTfXgqpt/XvK17a/8wY9/q6fcSPZT1aP6QW0u74VwaJF/Z9KbRcX23sWE4tODM+AolJNcUtErTkgOeFP/Q==}
     engines: {node: '>= 16'}
     hasBin: true
     dev: false
@@ -7607,21 +7598,11 @@ packages:
     engines: {node: '>= 0.6'}
     dev: true
 
-  /mime-standard@1.0.2:
-    resolution: {integrity: sha512-xUmjXVgIU9bL370jglTuRunmIJyOx9CKPH5IgaQtfx7IwUmKfMKuJddFXCFALFks/9fZ/zk3/ko9NoTskVx51g==}
-    dev: true
-
   /mime-types@2.1.35:
     resolution: {integrity: sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==}
     engines: {node: '>= 0.6'}
     dependencies:
       mime-db: 1.52.0
-    dev: true
-
-  /mime2ext@2.0.0:
-    resolution: {integrity: sha512-v4f86Jsi/wtqbeXVJXcd7ZxMGAnTJ55LlMJS2tNYEQQoevDq6DdsxJxIAACjRUMPL43QJVzL6nF5x78BNf4R2Q==}
-    dependencies:
-      mime-standard: 1.0.2
     dev: true
 
   /mime@1.6.0:

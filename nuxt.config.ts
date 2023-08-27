@@ -20,6 +20,10 @@ export default defineNuxtConfig({
       ],
     },
   },
+  alias: {
+    "micromark/lib/preprocess.js": "micromark",
+    "micromark/lib/postprocess.js": "micromark",
+  },
   css: [
     '~/assets/css/main.css',
   ],
