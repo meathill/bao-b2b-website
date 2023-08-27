@@ -5,7 +5,7 @@ import type { ApiResponse } from '~/types';
 const route = useRoute();
 const search = route.query.search;
 
-const { data, pending } = useAsyncData(
+const { data, pending } = await useAsyncData(
   'search',
   async function () {
     const { data } = await $fetch<ApiResponse<Product[]>>('/api/search?search=' + search);

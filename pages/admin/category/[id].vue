@@ -12,7 +12,7 @@ const isNew = isNaN(categoryId);
 const isSaving = ref<boolean>(false);
 const status = ref<boolean>(false);
 const message = ref<string>('');
-const { data: category, pending } = useAsyncData(
+const { data: category, pending } = await useAsyncData(
   '/api/category/' + route.params.id,
   async function () {
     if (isNew) { return createCategory() }

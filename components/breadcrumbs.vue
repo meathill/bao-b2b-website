@@ -8,7 +8,7 @@ type Props = {
 };
 const props = defineProps<Props>();
 
-const { data, refresh } = useAsyncData(
+const { data, refresh } = await useAsyncData(
   async function () {
     if (!props.category) {
       return [];

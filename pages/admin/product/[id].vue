@@ -16,7 +16,7 @@ const isLoadingSpec = ref<boolean>(false);
 const status = ref<boolean>(false);
 const message = ref<string>('');
 const { data: products } = useNuxtData('/api/products');
-const { data: product, pending } = useAsyncData(
+const { data: product, pending } = await useAsyncData(
   '/api/product/' + route.params.id,
   async function () {
     if (isNew) { return createProduct() }

@@ -2,7 +2,7 @@
 import type { ApiResponse } from '~/types';
 import type { Product } from '~/db/types';
 
-const { data: products, pending, refresh } = useAsyncData(
+const { data: products, pending, refresh } = await useAsyncData(
   'products',
   async function () {
     const { data: products } = await $fetch<ApiResponse<Product[]>>('/api/products');

@@ -13,7 +13,7 @@ const StatusLabel: Record<string, string> = reduce(QuotationStatus, (acc, value,
   return acc;
 }, {} as Record<string, string>);
 
-const { data: quotations, pending } = useAsyncData(
+const { data: quotations, pending } = await useAsyncData(
   'quotations',
   async function () {
     const { data } = await $fetch<ApiResponse<Quotation[]>>('/api/requests');

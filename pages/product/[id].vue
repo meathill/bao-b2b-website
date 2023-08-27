@@ -42,9 +42,6 @@ const description = computed<string>(() => {
 function doSwitchTab(tab: number): void {
   currentTab.value = tab;
 }
-function doAddToQuotation(product: Product): void {
-
-}
 </script>
 
 <template lang="pug">
@@ -65,16 +62,21 @@ main.container.mx-auto.py-4
           img.w-full.h-full.block.object-cover.rounded-box(
             :src="useImageProxy(item)"
             :alt="product.name"
+            loading="lazy"
           )
       .flex.w-full.pt-2.gap-2
-        img.w-17-6.h-13-2.block.object-cover.rounded-box(
+        a(
           v-for="(item, index) in product.images"
-          :class="{'outline outline-primary': currentImage === index}"
-          :key="item"
-          :src="useImageProxy(item)"
-          :alt="product.name"
-          @click="currentImage = index"
+          :key="index"
+          :href="'#product-image-' + index"
         )
+          img.w-17-6.h-13-2.block.object-cover.rounded-box(
+            :class="{'outline outline-primary': currentImage === index}"
+            :src="useImageProxy(item)"
+            :alt="product.name"
+            loading="lazy"
+            @click="currentImage = index"
+          )
     .flex-1.flex.flex-col
       p.mb-auto
         i.bi.bi-dot
@@ -152,6 +154,7 @@ main.container.mx-auto.py-4
         v-if="item.images.length"
         :src="useImageProxy(item.images[0])"
         :alt="item.name"
+        loading="lazy"
       )
       h4.font-bold.mt-2 {{item.name}}
 </template>

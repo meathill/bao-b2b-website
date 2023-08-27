@@ -11,3 +11,4 @@ dist
 .idea
 .vercel
 .env.development.local
+created.json

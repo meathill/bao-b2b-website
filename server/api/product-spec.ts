@@ -16,7 +16,7 @@ export default defineEventHandler(async function (event: H3Event): Promise<ApiRe
   }
 
   const results = await db.selectFrom(TABLE_SPEC)
-    .innerJoin(TABLE_PRODUCT_SPEC, TABLE_PRODUCT_SPEC + '.specId', TABLE_SPEC + '.id')
+    .leftJoin(TABLE_PRODUCT_SPEC, TABLE_PRODUCT_SPEC + '.specId', TABLE_SPEC + '.id')
     .where('category', '=', category as number)
     .select([
       TABLE_SPEC + '.id',
