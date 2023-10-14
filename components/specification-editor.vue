@@ -22,7 +22,7 @@ const localValue = computed<EditedSpecification>({
 });
 const localOptions = computed<string>({
   get() {
-    return localValue.value.options.join('\n');
+    return localValue.value.options ? localValue.value.options.join('\n') : '';
   },
   set(value: string) {
     let defaultValue = '';

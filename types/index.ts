@@ -1,3 +1,8 @@
+declare global {
+  const __VERSION__: String;
+  const __R2_DOMAIN__: string;
+}
+
 export type RowItem = {
   id: number;
   isSaving: boolean;

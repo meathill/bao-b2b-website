@@ -3,6 +3,7 @@ import { createCategory, createSpecification } from '~/utils';
 import type { Category, EditedSpecification, Specification } from '~/db/types';
 import type { ApiResponse } from '~/types';
 import { useProductStore } from '~/store';
+import omit from "lodash/omit";
 
 const productStore = useProductStore();
 const route = useRoute();
@@ -20,7 +21,10 @@ const { data: category, pending } = await useAsyncData(
     let result: ApiResponse<Category>;
     try {
       result = await $fetch<ApiResponse<Category>>('/api/category/' + route.params.id);
-      if (!result.data) { throw new Error('Category not found.') }
+      if (!result.data) {
+        message.value = 'Category not found.';
+        return createCategory();
+      }
     } catch (e) {
       message.value = (e as Error).message || String(e);
       return createCategory();
@@ -74,7 +78,7 @@ async function doSave(event: Event): Promise<void> {
     const result = await $fetch<ApiResponse<number>>(url, {
       method,
       body: {
-        ...category.value,
+        ...omit(category.value, ['createdAt', 'deletedAt', 'updatedAt', 'id']),
         ...!isNew && { id: categoryId },
       },
     });

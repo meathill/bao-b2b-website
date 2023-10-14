@@ -1,6 +1,3 @@
-<script lang="ts" setup>
-</script>
-
 <template lang="pug">
 main.container.mx-auto.pt-4
   content-doc.prose.mx-auto(

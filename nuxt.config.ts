@@ -1,4 +1,3 @@
-import postcss from './postcss.config';
 import pkg from './package.json' assert { type: 'json' };
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -9,7 +8,7 @@ export default defineNuxtConfig({
       link: [
         {
           rel: 'stylesheet',
-          href: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css',
+          href: 'https://unpkg.com/bootstrap-icons@1.11.1/font/bootstrap-icons.css',
         },
       ],
       meta: [
@@ -19,10 +18,6 @@ export default defineNuxtConfig({
         },
       ],
     },
-  },
-  alias: {
-    'micromark/lib/preprocess.js': 'micromark',
-    'micromark/lib/postprocess.js': 'micromark',
   },
   css: [
     '~/assets/css/main.css',
@@ -37,15 +32,14 @@ export default defineNuxtConfig({
       },
     ],
   ],
-  content: {
-  },
-  runtimeConfig: {
-    public: {
-      version: pkg.version,
-      r2Domain: process.env.R2_DOMAIN,
+  postcss: {
+    plugins: {
+      'postcss-import': {},
+      'tailwindcss/nesting': {},
+      tailwindcss: {},
+      autoprefixer: {},
     },
   },
-  postcss,
   routeRules: {
     // pre-rendered at build time
     '/': { prerender: true },
@@ -61,5 +55,11 @@ export default defineNuxtConfig({
     '/admin/**': { ssr: false },
     // Add cors headers on API routes
     '/api/**': { cors: true },
+  },
+  vite: {
+    define: {
+      __VERSION__: JSON.stringify(pkg.version),
+      __R2_DOMAIN__: JSON.stringify(process.env.R2_DOMAIN),
+    },
   },
 });

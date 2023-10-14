@@ -5,7 +5,7 @@ type Props = {
   accept?: string;
   label?: string;
   multiple?: boolean;
-  modelValue: string | string[];
+  modelValue: null | string | string[];
 };
 const props = withDefaults(defineProps<Props>(), {
   accept: 'image/*',
@@ -20,7 +20,6 @@ type Emits = {
 };
 const emit = defineEmits<Emits>();
 
-const runtime = useRuntimeConfig();
 const localValue = computed<string[]>({
   get(): string[] {
     if (Array.isArray(props.modelValue)) { return props.modelValue }
@@ -66,7 +65,7 @@ async function onFileChange(event: Event, index: number): Promise<void> {
     console.error('Failed to upload file to R2');
   }
   uploadings.value[index] = false;
-  localValue.value[index] = runtime.public.r2Domain + '/' + objectKey;
+  localValue.value[index] = `${__R2_DOMAIN__}/${objectKey}`;
   update();
 }
 function update(): void {
